@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MasterMatch — Find Your Program</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:        #faf9f6;
+      --white:     #ffffff;
+      --ink:       #1a1a1a;
+      --muted:     #7a7a7a;
+      --border:    #d8d4cc;
+
+      --mint:      #b8e8d4;
+      --mint-soft: #dff4ec;
+      --pink:      #f9c8d4;
+      --pink-soft: #fde8ed;
+      --sky:       #b8d8f0;
+      --sky-soft:  #deeef9;
+      --yellow:    #f9e8a0;
+      --peach:     #fdd5b0;
+
+      --radius-sm: 8px;
+      --radius:    16px;
+      --radius-lg: 24px;
+      --radius-pill: 100px;
+
+      --font-display: 'Playfair Display', serif;
+      --font-body:    'DM Sans', sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--font-body);
+      font-weight: 300;
+      min-height: 100vh;
+      /* subtle grid background like the pin */
+      background-image:
+        linear-gradient(rgba(0,0,0,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,0,0,0.04) 1px, transparent 1px);
+      background-size: 32px 32px;
+    }
+
+    /* ── HEADER ─────────────────────────────────────────────── */
+    header {
+      background: var(--white);
+      border-bottom: 1.5px solid var(--ink);
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .logo {
+      font-family: var(--font-display);
+      font-weight: 900;
+      font-size: 1.5rem;
+      letter-spacing: -0.03em;
+    }
+    .logo span {
+      background: var(--mint);
+      padding: 0 6px;
+      border-radius: 4px;
+    }
+
+    .nav-tag {
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      border: 1.5px solid var(--border);
+      padding: 0.35rem 1rem;
+      border-radius: var(--radius-pill);
+    }
+
+    /* ── HERO ────────────────────────────────────────────────── */
+    .hero {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 5rem 2rem 3rem;
+      text-align: center;
+      position: relative;
+    }
+
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      border: 1.5px solid var(--border);
+      background: var(--white);
+      padding: 0.4rem 1.1rem;
+      border-radius: var(--radius-pill);
+      margin-bottom: 1.8rem;
+    }
+    .hero-eyebrow::before { content: '✦'; color: var(--ink); font-size: 0.6rem; }
+
+    h1 {
+      font-family: var(--font-display);
+      font-size: clamp(3rem, 8vw, 5.5rem);
+      font-weight: 900;
+      line-height: 1.0;
+      letter-spacing: -0.03em;
+      margin-bottom: 1.4rem;
+    }
+    h1 em {
+      font-style: italic;
+      font-weight: 700;
+      position: relative;
+    }
+    /* highlighted words */
+    .hl-mint   { background: var(--mint);   padding: 0 10px 4px; border-radius: 6px; font-style: normal; }
+    .hl-pink   { background: var(--pink);   padding: 0 10px 4px; border-radius: 6px; font-style: normal; }
+    .hl-yellow { background: var(--yellow); padding: 0 10px 4px; border-radius: 6px; font-style: normal; }
+
+    .hero-sub {
+      color: var(--muted);
+      font-size: 1.05rem;
+      max-width: 480px;
+      margin: 0 auto 2.5rem;
+      line-height: 1.6;
+    }
+
+    /* ── FLOATING TAGS ────────────────────────────────────────── */
+    .float-tag {
+      display: inline-block;
+      background: var(--white);
+      border: 1.5px solid var(--ink);
+      border-radius: var(--radius-pill);
+      padding: 0.35rem 0.9rem;
+      font-size: 0.75rem;
+      font-weight: 500;
+      position: absolute;
+    }
+    .ft1 { top: 5rem;  left: 2rem;  background: var(--mint);  transform: rotate(-4deg); }
+    .ft2 { top: 6rem;  right: 2rem; background: var(--pink);  transform: rotate(3deg); }
+    .ft3 { bottom: 2rem; left: 3rem; background: var(--yellow); transform: rotate(2deg); }
+
+    /* ── TICKER ───────────────────────────────────────────────── */
+    .ticker-wrap {
+      background: var(--ink);
+      color: var(--white);
+      overflow: hidden;
+      padding: 0.6rem 0;
+      font-size: 0.78rem;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      white-space: nowrap;
+      border-top: 1.5px solid var(--ink);
+      border-bottom: 1.5px solid var(--ink);
+    }
+    .ticker-inner {
+      display: inline-block;
+      animation: ticker 22s linear infinite;
+    }
+    .ticker-inner span { margin: 0 2rem; }
+    .ticker-inner span::before { content: '✦'; margin-right: 2rem; opacity: 0.5; }
+    @keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+    /* ── MAIN LAYOUT ─────────────────────────────────────────── */
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 3rem 1.5rem 5rem;
+    }
+
+    /* ── FORM CARD ───────────────────────────────────────────── */
+    .form-card {
+      background: var(--white);
+      border: 1.5px solid var(--ink);
+      border-radius: var(--radius-lg);
+      padding: 2.5rem;
+      box-shadow: 5px 5px 0px var(--ink);
+      margin-bottom: 2.5rem;
+    }
+
+    .form-card-title {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 1.8rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+    .form-card-title .badge {
+      background: var(--mint);
+      border: 1.5px solid var(--ink);
+      border-radius: var(--radius-pill);
+      font-family: var(--font-body);
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 0.2rem 0.7rem;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.4rem;
+    }
+    .form-group { display: flex; flex-direction: column; gap: 0.45rem; }
+    .form-group.full { grid-column: 1 / -1; }
+
+    label {
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    input, select, textarea {
+      background: var(--bg);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--ink);
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      font-weight: 300;
+      padding: 0.75rem 1rem;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.15s;
+      width: 100%;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--ink);
+      box-shadow: 3px 3px 0 var(--ink);
+      background: var(--white);
+    }
+    select option { background: var(--white); }
+    textarea { resize: vertical; min-height: 80px; }
+
+    /* ── COUNTRY CHIPS ───────────────────────────────────────── */
+    .chip-grid { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.2rem; }
+    .chip {
+      padding: 0.35rem 0.9rem;
+      border-radius: var(--radius-pill);
+      border: 1.5px solid var(--border);
+      background: var(--white);
+      color: var(--muted);
+      font-size: 0.8rem;
+      font-weight: 400;
+      cursor: pointer;
+      transition: all 0.15s;
+      user-select: none;
+    }
+    .chip:hover:not(.active) { border-color: var(--ink); color: var(--ink); }
+    .chip.active {
+      background: var(--mint);
+      border-color: var(--ink);
+      color: var(--ink);
+      font-weight: 500;
+      box-shadow: 2px 2px 0 var(--ink);
+    }
+
+    /* ── SUBMIT ──────────────────────────────────────────────── */
+    .btn-match {
+      width: 100%;
+      margin-top: 2rem;
+      padding: 1rem 1.5rem;
+      background: var(--ink);
+      border: 1.5px solid var(--ink);
+      border-radius: var(--radius-pill);
+      color: var(--white);
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s;
+      box-shadow: 4px 4px 0 #b8e8d4;
+    }
+    .btn-match:hover  { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 #b8e8d4; }
+    .btn-match:active { transform: translate(0,0); box-shadow: 2px 2px 0 #b8e8d4; }
+    .btn-match:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+
+    /* ── LOADING ─────────────────────────────────────────────── */
+    .loading {
+      display: none;
+      text-align: center;
+      padding: 3rem;
+    }
+    .loading-dots {
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+    .loading-dots span {
+      width: 10px; height: 10px;
+      background: var(--ink);
+      border-radius: 50%;
+      animation: bounce 0.8s ease-in-out infinite;
+    }
+    .loading-dots span:nth-child(2) { animation-delay: 0.15s; }
+    .loading-dots span:nth-child(3) { animation-delay: 0.3s; }
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+    .loading p { color: var(--muted); font-size: 0.9rem; }
+
+    /* ── RESULTS ─────────────────────────────────────────────── */
+    #results { display: none; }
+
+    .results-header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+    }
+    .results-header h2 {
+      font-family: var(--font-display);
+      font-size: 1.8rem;
+      font-weight: 700;
+    }
+    .results-count {
+      font-size: 0.78rem;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      background: var(--white);
+      border: 1.5px solid var(--border);
+      padding: 0.3rem 0.9rem;
+      border-radius: var(--radius-pill);
+    }
+
+    /* ── RESULT CARD ─────────────────────────────────────────── */
+    /* alternate pastel backgrounds */
+    .card-colors { --colors: var(--mint-soft), var(--pink-soft), var(--sky-soft), var(--yellow), var(--peach); }
+
+    .result-card {
+      background: var(--white);
+      border: 1.5px solid var(--ink);
+      border-radius: var(--radius-lg);
+      padding: 1.6rem;
+      margin-bottom: 1rem;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 1.2rem;
+      align-items: start;
+      box-shadow: 4px 4px 0 var(--ink);
+      opacity: 0;
+      transform: translateY(12px);
+      animation: fadeUp 0.35s forwards;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .result-card:hover {
+      transform: translate(-2px, -2px);
+      box-shadow: 6px 6px 0 var(--ink);
+    }
+    /* pastel accent strip on left */
+    .result-card::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 16px; bottom: 16px;
+      width: 4px;
+      border-radius: 4px;
+      background: var(--card-accent, var(--mint));
+    }
+    .result-card { position: relative; padding-left: 1.8rem; }
+
+    @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+
+    .card-rank {
+      font-size: 0.68rem;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.3rem;
+    }
+    .card-title {
+      font-family: var(--font-display);
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin-bottom: 0.15rem;
+    }
+    .card-uni {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-bottom: 0.9rem;
+    }
+
+    .card-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-bottom: 0.8rem;
+    }
+    .pill {
+      font-size: 0.72rem;
+      font-weight: 500;
+      padding: 0.22rem 0.7rem;
+      border-radius: var(--radius-pill);
+      border: 1.5px solid var(--ink);
+    }
+    .pill-mint   { background: var(--mint);   }
+    .pill-pink   { background: var(--pink);   }
+    .pill-sky    { background: var(--sky);    }
+    .pill-yellow { background: var(--yellow); }
+    .pill-plain  { background: transparent; color: var(--muted); border-color: var(--border); }
+
+    .card-explanation {
+      font-size: 0.82rem;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    /* ── SCORE BADGE ─────────────────────────────────────────── */
+    .score-badge {
+      flex-shrink: 0;
+      width: 64px; height: 64px;
+      border-radius: 50%;
+      border: 1.5px solid var(--ink);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 2px 2px 0 var(--ink);
+      position: relative;
+    }
+    .score-num {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      font-weight: 900;
+      line-height: 1;
+    }
+    .score-label {
+      font-size: 0.55rem;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .card-link {
+      display: inline-block;
+      margin-top: 0.7rem;
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: var(--ink);
+      text-decoration: none;
+      border: 1.5px solid var(--ink);
+      padding: 0.3rem 0.8rem;
+      border-radius: var(--radius-pill);
+      background: var(--white);
+      transition: background 0.15s;
+    }
+    .card-link:hover { background: var(--mint); }
+
+    /* ── NO RESULTS ──────────────────────────────────────────── */
+    .no-results {
+      text-align: center;
+      padding: 3rem;
+      background: var(--white);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-lg);
+    }
+    .no-results h3 {
+      font-family: var(--font-display);
+      font-size: 1.3rem;
+      margin-bottom: 0.5rem;
+    }
+    .no-results p { color: var(--muted); font-size: 0.9rem; }
+
+    /* ── AUTH BUTTONS ────────────────────────────────────────── */
+    .nav-btn {
+      transition: transform 0.1s, box-shadow 0.1s, background-color 0.15s;
+    }
+    .nav-btn:hover {
+      transform: translate(-1.5px, -1.5px);
+    }
+    .nav-btn:active {
+      transform: translate(0, 0);
+    }
+    .btn-secondary:hover {
+      box-shadow: 3.5px 3.5px 0 var(--ink) !important;
+    }
+    .btn-secondary:active {
+      box-shadow: 1px 1px 0 var(--ink) !important;
+    }
+    .btn-primary:hover {
+      box-shadow: 3.5px 3.5px 0 var(--mint) !important;
+    }
+    .btn-primary:active {
+      box-shadow: 1px 1px 0 var(--mint) !important;
+    }
+
+    /* ── FAVORITE BUTTON ─────────────────────────────────────── */
+    .favorite-btn {
+      position: absolute;
+      top: 1rem;
+      right: 1.2rem;
+      background: var(--white);
+      border: 1.5px solid var(--ink);
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s, background-color 0.15s;
+      box-shadow: 2px 2px 0 var(--ink);
+      font-size: 1.1rem;
+      user-select: none;
+      z-index: 5;
+    }
+    .favorite-btn:hover {
+      transform: translate(-1.5px, -1.5px);
+      box-shadow: 3.5px 3.5px 0 var(--ink);
+    }
+    .favorite-btn:active {
+      transform: translate(0, 0);
+      box-shadow: 1px 1px 0 var(--ink);
+    }
+    .favorite-btn.favorited {
+      background: var(--pink);
+    }
+
+    /* ── RESPONSIVE ──────────────────────────────────────────── */
+    @media (max-width: 640px) {
+      .form-grid { grid-template-columns: 1fr; }
+      .result-card { grid-template-columns: 1fr; }
+      .ft1, .ft2, .ft3 { display: none; }
+      h1 { font-size: 2.8rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── HEADER ──────────────────────────────────────────────── -->
+<header>
+  <div class="logo">master<span>match</span>.</div>
+  <div class="nav-right" style="display: flex; align-items: center; gap: 1rem;">
+    {% if user.is_authenticated %}
+      <span class="user-welcome" style="font-size: 0.82rem; font-weight: 500; color: var(--ink);">
+        Hi, <strong>{{ user.username }}</strong>!
+      </span>
+      <a href="/favorites/" class="nav-btn btn-secondary" style="font-size: 0.78rem; font-weight: 500; text-decoration: none; color: var(--ink); border: 1.5px solid var(--ink); padding: 0.35rem 1rem; border-radius: var(--radius-pill); background: var(--yellow); box-shadow: 2px 2px 0 var(--ink); display: inline-block; margin-right: 0.2rem;">My Favorites</a>
+      <a href="/logout/" class="nav-btn btn-secondary" style="font-size: 0.78rem; font-weight: 500; text-decoration: none; color: var(--ink); border: 1.5px solid var(--ink); padding: 0.35rem 1rem; border-radius: var(--radius-pill); background: var(--pink); box-shadow: 2px 2px 0 var(--ink); display: inline-block;">Logout</a>
+    {% else %}
+      <a href="/login/" class="nav-btn" style="font-size: 0.78rem; font-weight: 500; text-decoration: none; color: var(--ink); border: 1.5px solid var(--border); padding: 0.35rem 1rem; border-radius: var(--radius-pill); background: var(--white); display: inline-block;">Login</a>
+      <a href="/register/" class="nav-btn btn-primary" style="font-size: 0.78rem; font-weight: 500; text-decoration: none; color: var(--white); border: 1.5px solid var(--ink); padding: 0.35rem 1rem; border-radius: var(--radius-pill); background: var(--ink); box-shadow: 2px 2px 0 var(--mint); display: inline-block;">Register</a>
+    {% endif %}
+    <div class="nav-tag" style="margin-left: 0.5rem;">EE 471 · Final Project</div>
+  </div>
+</header>
+
+<!-- ── HERO ────────────────────────────────────────────────── -->
+<div class="hero">
+  <div class="float-tag ft1">🎓 64 programs</div>
+  <div class="float-tag ft2">🌍 13 countries</div>
+  <div class="float-tag ft3">✦ AI-powered</div>
+
+  <div class="hero-eyebrow">Find your master's program abroad</div>
+
+  <h1>
+    the <span class="hl-mint">smarter</span> way<br>
+    to find your<br>
+    <em>dream program.</em>
+  </h1>
+
+  <p class="hero-sub">
+    Tell us about yourself — your GPA, interests, and goals.
+    We'll match you with programs you actually qualify for.
+  </p>
+</div>
+
+<!-- ── TICKER ───────────────────────────────────────────────── -->
+<div class="ticker-wrap">
+  <div class="ticker-inner">
+    <span>Find your program</span>
+    <span>64 universities worldwide</span>
+    <span>AI-powered matching</span>
+    <span>Electrical Engineering</span>
+    <span>Computer Science</span>
+    <span>Robotics</span>
+    <span>Data Science</span>
+    <span>Biomedical Engineering</span>
+    <span>Energy Systems</span>
+    <span>Communications Engineering</span>
+    <!-- duplicate for seamless loop -->
+    <span>Find your program</span>
+    <span>64 universities worldwide</span>
+    <span>AI-powered matching</span>
+    <span>Electrical Engineering</span>
+    <span>Computer Science</span>
+    <span>Robotics</span>
+    <span>Data Science</span>
+    <span>Biomedical Engineering</span>
+    <span>Energy Systems</span>
+    <span>Communications Engineering</span>
+  </div>
+</div>
+
+<!-- ── FORM ─────────────────────────────────────────────────── -->
+<div class="container">
+
+  <div class="form-card">
+    <div class="form-card-title" style="display: flex; justify-content: space-between; align-items: center;">
+      <div style="display: flex; align-items: center; gap: 0.6rem;">
+        Your Profile
+        <span class="badge">Step 1 of 1</span>
+      </div>
+      {% if user.is_authenticated %}
+        <span style="font-size:0.72rem; color: #2e7d32; font-weight:500; display:flex; align-items:center; gap:4px; border: 1.5px solid #2e7d32; padding: 0.2rem 0.6rem; border-radius: var(--radius-pill); background: #e8f5e9;">
+          Profile Synced ✓
+        </span>
+      {% else %}
+        <a href="/login/" style="font-size:0.72rem; color: var(--muted); text-decoration:underline; font-weight: 500;">Log in to sync profile</a>
+      {% endif %}
+    </div>
+
+    <div class="form-grid">
+
+      <div class="form-group">
+        <label>Field of Study</label>
+        <select id="field">
+          <option value="">Select a field…</option>
+          <option>Electrical & Electronics Engineering</option>
+          <option>Computer Science & AI</option>
+          <option>Communications Engineering</option>
+          <option>Data Science</option>
+          <option>Robotics & Embedded Systems</option>
+          <option>Biomedical Engineering</option>
+          <option>Energy & Power Systems</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>GPA (out of 4.0)</label>
+        <input type="number" id="gpa" min="0" max="4" step="0.1" placeholder="e.g. 3.2" />
+      </div>
+
+      <div class="form-group">
+        <label>Max Tuition Budget (USD / year)</label>
+        <input type="number" id="budget" step="1000" placeholder="Leave blank for any budget" />
+      </div>
+
+      <div class="form-group">
+        <label>Specific Interests</label>
+        <input type="text" id="interests" placeholder="e.g. machine learning, 5G, signal processing" />
+      </div>
+
+      <div class="form-group full">
+        <label>Career Goals</label>
+        <textarea id="career_goals" placeholder="e.g. I want to work in AI research or join a tech company in Europe after graduation…"></textarea>
+      </div>
+
+      <div class="form-group full">
+        <label>Preferred Countries <span style="font-size:0.7rem;opacity:0.5;text-transform:none;letter-spacing:0">— leave blank for any</span></label>
+        <div class="chip-grid" id="country-chips">
+          <div class="chip" data-value="Germany">🇩🇪 Germany</div>
+          <div class="chip" data-value="Netherlands">🇳🇱 Netherlands</div>
+          <div class="chip" data-value="Sweden">🇸🇪 Sweden</div>
+          <div class="chip" data-value="Finland">🇫🇮 Finland</div>
+          <div class="chip" data-value="Switzerland">🇨🇭 Switzerland</div>
+          <div class="chip" data-value="UK">🇬🇧 UK</div>
+          <div class="chip" data-value="Canada">🇨🇦 Canada</div>
+          <div class="chip" data-value="USA">🇺🇸 USA</div>
+          <div class="chip" data-value="Italy">🇮🇹 Italy</div>
+          <div class="chip" data-value="Singapore">🇸🇬 Singapore</div>
+          <div class="chip" data-value="Australia">🇦🇺 Australia</div>
+          <div class="chip" data-value="Denmark">🇩🇰 Denmark</div>
+          <div class="chip" data-value="Poland">🇵🇱 Poland</div>
+          <div class="chip" data-value="Czech Republic">🇨🇿 Czech Republic</div>
+          <div class="chip" data-value="Hungary">🇭🇺 Hungary</div>
+          <div class="chip" data-value="Estonia">🇪🇪 Estonia</div>
+          <div class="chip" data-value="Spain">🇪🇸 Spain</div>
+          <div class="chip" data-value="Serbia">🇷🇸 Serbia</div>
+          <div class="chip" data-value="Cyprus">🇨🇾 Cyprus</div>
+        </div>
+      </div>
+
+    </div>
+
+    <button class="btn-match" id="match-btn" onclick="runMatch()">
+      Find My Programs →
+    </button>
+  </div>
+
+  <!-- ── LOADING ──────────────────────────────────────────── -->
+  <div class="loading" id="loading">
+    <div class="loading-dots">
+      <span></span><span></span><span></span>
+    </div>
+    <p>Analyzing your profile…</p>
+  </div>
+
+  <!-- ── RESULTS ─────────────────────────────────────────── -->
+  <div id="results">
+    <div class="results-header">
+      <h2>Your Matches ✦</h2>
+      <span class="results-count" id="results-count"></span>
+    </div>
+    <div id="results-list"></div>
+  </div>
+
+</div>
+
+<script>
+  // ── Chip toggle ───────────────────────────────────────────
+  document.querySelectorAll('.chip').forEach(chip => {
+    chip.addEventListener('click', () => chip.classList.toggle('active'));
+  });
+
+  // ── Card accent colors ────────────────────────────────────
+  const accents = ['#b8e8d4','#f9c8d4','#b8d8f0','#f9e8a0','#fdd5b0'];
+
+  // ── Score badge color ─────────────────────────────────────
+  function badgeBg(score) {
+    if (score >= 70) return '#b8e8d4';
+    if (score >= 50) return '#f9e8a0';
+    return '#f9c8d4';
+  }
+
+  // ── Tuition pill ──────────────────────────────────────────
+  function tuitionPill(t) {
+    if (t === 0)    return '<span class="pill pill-mint">Free tuition 🎉</span>';
+    if (t < 5000)   return `<span class="pill pill-mint">$${t.toLocaleString()}/yr</span>`;
+    if (t < 20000)  return `<span class="pill pill-sky">$${t.toLocaleString()}/yr</span>`;
+    return `<span class="pill pill-plain">$${t.toLocaleString()}/yr</span>`;
+  }
+
+  // ── Render results ────────────────────────────────────────
+  function renderResults(data) {
+    const list = document.getElementById('results-list');
+    list.innerHTML = '';
+
+    if (!data.length) {
+      list.innerHTML = `
+        <div class="no-results">
+          <h3>No matches found</h3>
+          <p>Try relaxing your GPA, budget, or country filters.</p>
+        </div>`;
+      return;
+    }
+
+    document.getElementById('results-count').textContent =
+      `${data.length} program${data.length !== 1 ? 's' : ''} found`;
+
+    data.forEach((p, i) => {
+      const accent = accents[i % accents.length];
+      const tags = p.field_tags.split(',').slice(0, 3)
+        .map(t => `<span class="pill pill-sky">${t.trim()}</span>`).join('');
+
+      const card = document.createElement('div');
+      card.className = 'result-card';
+      card.style.animationDelay = `${i * 55}ms`;
+      card.style.setProperty('--card-accent', accent);
+
+      const favClass = p.is_favorited ? 'favorited' : '';
+      const favHeart = p.is_favorited ? '♥' : '♡';
+
+      card.innerHTML = `
+        <div class="favorite-btn ${favClass}" 
+             data-university="${p.university.replace(/"/g, '&quot;')}" 
+             data-program="${p.program.replace(/"/g, '&quot;')}"
+             onclick="handleFavoriteClick(this)"
+             title="Add to favorites">
+          ${favHeart}
+        </div>
+        <div class="card-left">
+          <div class="card-rank">#${i + 1} Match</div>
+          <div class="card-title">${p.program}</div>
+          <div class="card-uni">${p.university} · ${p.city}, ${p.country}</div>
+          <div class="card-meta">
+            ${tuitionPill(p.tuition)}
+            <span class="pill pill-plain">GPA ≥ ${p.min_gpa}</span>
+            <span class="pill pill-plain">${p.duration} yr${p.duration > 1 ? 's' : ''}</span>
+            ${p.scholarship ? '<span class="pill pill-yellow">Scholarship ✓</span>' : ''}
+            <span class="pill pill-pink">Deadline: ${p.deadline}</span>
+            ${tags}
+          </div>
+          <div class="card-explanation">${p.explanation}</div>
+          <a class="card-link" href="${p.url}" target="_blank">View Program →</a>
+        </div>
+        <div class="card-right">
+          <div class="score-badge" style="background:${badgeBg(p.score)}">
+            <div class="score-num">${p.score}%</div>
+            <div class="score-label">match</div>
+          </div>
+        </div>`;
+      list.appendChild(card);
+    });
+  }
+
+  // ── Toggle Favorite Click Handler ─────────────────────────
+  async function handleFavoriteClick(btn) {
+    const university = btn.dataset.university;
+    const program = btn.dataset.program;
+    const isAuthenticated = {% if user.is_authenticated %}true{% else %}false{% endif %};
+    
+    if (!isAuthenticated) {
+      alert("Please log in or register to save favorites.");
+      window.location.href = "/login/";
+      return;
+    }
+
+    const isFavorited = btn.classList.contains('favorited');
+    if (isFavorited) {
+      btn.classList.remove('favorited');
+      btn.innerHTML = '♡';
+    } else {
+      btn.classList.add('favorited');
+      btn.innerHTML = '♥';
+    }
+
+    try {
+      const res = await fetch('/favorites/toggle/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          university_name: university,
+          program_name: program
+        })
+      });
+      const data = await res.json();
+      
+      if (res.status === 401) {
+        alert("Please log in or register to save favorites.");
+        window.location.href = "/login/";
+        return;
+      }
+      
+      if (!data.success) {
+        console.error("Failed to toggle favorite:", data.error);
+        if (isFavorited) {
+          btn.classList.add('favorited');
+          btn.innerHTML = '♥';
+        } else {
+          btn.classList.remove('favorited');
+          btn.innerHTML = '♡';
+        }
+      } else {
+        if (data.favorited) {
+          btn.classList.add('favorited');
+          btn.innerHTML = '♥';
+        } else {
+          btn.classList.remove('favorited');
+          btn.innerHTML = '♡';
+        }
+      }
+    } catch (err) {
+      console.error(err);
+      if (isFavorited) {
+        btn.classList.add('favorited');
+        btn.innerHTML = '♥';
+      } else {
+        btn.classList.remove('favorited');
+        btn.innerHTML = '♡';
+      }
+    }
+  }
+
+  // ── Main function ─────────────────────────────────────────
+  async function runMatch() {
+    const btn     = document.getElementById('match-btn');
+    const loading = document.getElementById('loading');
+    const results = document.getElementById('results');
+
+    const countries = [...document.querySelectorAll('.chip.active')]
+      .map(c => c.dataset.value);
+
+    const profile = {
+      field:        document.getElementById('field').value,
+      gpa:          parseFloat(document.getElementById('gpa').value)    || 0,
+      budget:       parseFloat(document.getElementById('budget').value) || 999999,
+      interests:    document.getElementById('interests').value,
+      career_goals: document.getElementById('career_goals').value,
+      countries,
+    };
+
+    btn.disabled = true;
+    loading.style.display = 'block';
+    results.style.display  = 'none';
+
+    try {
+      const res  = await fetch('/match', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify(profile),
+      });
+      const data = await res.json();
+      loading.style.display = 'none';
+      results.style.display  = 'block';
+      renderResults(data);
+      results.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } catch (err) {
+      loading.style.display = 'none';
+      alert('Something went wrong. Make sure the Flask server is running.');
+      console.error(err);
+    } finally {
+      btn.disabled = false;
+    }
+  }
+
+  // ── Populate Profile from Backend ─────────────────────────
+  const profileJson = '{{ profile_data_json|escapejs }}';
+  if (profileJson) {
+    try {
+      const profile = JSON.parse(profileJson);
+      if (profile && Object.keys(profile).length > 0) {
+        if (profile.field) document.getElementById('field').value = profile.field;
+        if (profile.gpa) document.getElementById('gpa').value = profile.gpa;
+        if (profile.budget && profile.budget !== 999999) document.getElementById('budget').value = profile.budget;
+        if (profile.interests) document.getElementById('interests').value = profile.interests;
+        if (profile.career_goals) document.getElementById('career_goals').value = profile.career_goals;
+        
+        if (profile.countries && profile.countries.length > 0) {
+          const chips = document.querySelectorAll('.chip');
+          chips.forEach(chip => {
+            if (profile.countries.includes(chip.dataset.value)) {
+              chip.classList.add('active');
+            }
+          });
+        }
+        console.log("Profile pre-populated successfully.");
+      }
+    } catch (e) {
+      console.error("Error parsing profile data:", e);
+    }
+  }
+</script>
+
+</body>
+</html>

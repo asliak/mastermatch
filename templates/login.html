@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login — MasterMatch</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:        #faf9f6;
+      --white:     #ffffff;
+      --ink:       #1a1a1a;
+      --muted:     #7a7a7a;
+      --border:    #d8d4cc;
+      --mint:      #b8e8d4;
+      --mint-soft: #dff4ec;
+      --pink:      #f9c8d4;
+      --pink-soft: #fde8ed;
+      --sky:       #b8d8f0;
+      
+      --radius-sm: 8px;
+      --radius:    16px;
+      --radius-lg: 24px;
+      --radius-pill: 100px;
+
+      --font-display: 'Playfair Display', serif;
+      --font-body:    'DM Sans', sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--font-body);
+      font-weight: 300;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background-image:
+        linear-gradient(rgba(0,0,0,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,0,0,0.04) 1px, transparent 1px);
+      background-size: 32px 32px;
+    }
+
+    /* ── HEADER ─────────────────────────────────────────────── */
+    header {
+      background: var(--white);
+      border-bottom: 1.5px solid var(--ink);
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      font-family: var(--font-display);
+      font-weight: 900;
+      font-size: 1.5rem;
+      letter-spacing: -0.03em;
+      text-decoration: none;
+      color: var(--ink);
+    }
+    .logo span {
+      background: var(--mint);
+      padding: 0 6px;
+      border-radius: 4px;
+    }
+
+    .nav-tag {
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      border: 1.5px solid var(--border);
+      padding: 0.35rem 1rem;
+      border-radius: var(--radius-pill);
+    }
+
+    /* ── MAIN LAYOUT ─────────────────────────────────────────── */
+    .container {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem 1.5rem;
+    }
+
+    /* ── FORM CARD ───────────────────────────────────────────── */
+    .form-card {
+      background: var(--white);
+      border: 1.5px solid var(--ink);
+      border-radius: var(--radius-lg);
+      padding: 2.5rem;
+      box-shadow: 5px 5px 0px var(--ink);
+      width: 100%;
+      max-width: 440px;
+      position: relative;
+    }
+
+    /* Decorative Top Accent */
+    .form-card::before {
+      content: '';
+      position: absolute;
+      left: -1.5px; right: -1.5px; top: -1.5px;
+      height: 12px;
+      border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+      background: var(--sky);
+      border: 1.5px solid var(--ink);
+    }
+
+    .form-card-title {
+      font-family: var(--font-display);
+      font-size: 1.8rem;
+      font-weight: 900;
+      margin-top: 1rem;
+      margin-bottom: 1.8rem;
+      letter-spacing: -0.02em;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.45rem;
+      margin-bottom: 1.25rem;
+    }
+
+    label {
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    input {
+      background: var(--bg);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--ink);
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      font-weight: 400;
+      padding: 0.75rem 1rem;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.15s;
+      width: 100%;
+    }
+    input:focus {
+      border-color: var(--ink);
+      box-shadow: 3px 3px 0 var(--ink);
+      background: var(--white);
+    }
+
+    /* ── ERROR ALERT ─────────────────────────────────────────── */
+    .error-alert {
+      background: var(--pink-soft);
+      border: 1.5px solid var(--pink);
+      color: #b71c1c;
+      padding: 0.75rem 1rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.82rem;
+      font-weight: 400;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* ── BUTTON ──────────────────────────────────────────────── */
+    .btn-submit {
+      width: 100%;
+      margin-top: 1rem;
+      padding: 0.9rem 1.5rem;
+      background: var(--ink);
+      border: 1.5px solid var(--ink);
+      border-radius: var(--radius-pill);
+      color: var(--white);
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s;
+      box-shadow: 4px 4px 0 var(--mint);
+    }
+    .btn-submit:hover  { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--mint); }
+    .btn-submit:active { transform: translate(0,0); box-shadow: 2px 2px 0 var(--mint); }
+
+    /* ── FOOTER LINK ─────────────────────────────────────────── */
+    .footer-text {
+      text-align: center;
+      margin-top: 1.8rem;
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+    .footer-text a {
+      color: var(--ink);
+      text-decoration: none;
+      font-weight: 500;
+      border-bottom: 1.5px solid var(--mint);
+      transition: background-color 0.15s;
+    }
+    .footer-text a:hover {
+      background-color: var(--mint-soft);
+    }
+
+    /* ── SOCIAL AUTH BUTTONS ─────────────────────────────────── */
+    .social-divider {
+      display: flex;
+      align-items: center;
+      margin: 1.5rem 0;
+      gap: 0.5rem;
+    }
+    .social-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+    .btn-social {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      padding: 0.75rem 1.5rem;
+      border: 1.5px solid var(--ink);
+      border-radius: var(--radius-pill);
+      font-family: var(--font-body);
+      font-size: 0.92rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: transform 0.1s, box-shadow 0.1s;
+    }
+    .btn-social:hover {
+      transform: translate(-1.5px, -1.5px);
+    }
+    .btn-social:active {
+      transform: translate(0, 0);
+    }
+    .btn-google {
+      background: var(--white);
+      color: var(--ink);
+      box-shadow: 3px 3px 0 var(--ink);
+    }
+    .btn-google:hover {
+      box-shadow: 4.5px 4.5px 0 var(--ink);
+    }
+    .btn-google:active {
+      box-shadow: 1px 1px 0 var(--ink);
+    }
+    .btn-apple {
+      background: var(--ink);
+      color: var(--white);
+      box-shadow: 3px 3px 0 var(--mint);
+    }
+    .btn-apple:hover {
+      box-shadow: 4.5px 4.5px 0 var(--mint);
+    }
+    .btn-apple:active {
+      box-shadow: 1px 1px 0 var(--mint);
+    }
+    
+    /* Google Button Overlay Styles */
+    .google-btn-wrapper {
+      position: relative;
+      overflow: hidden;
+      width: 100%;
+      height: 44px;
+      margin-top: 1rem;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── HEADER ──────────────────────────────────────────────── -->
+<header>
+  <a href="/" class="logo">master<span>match</span>.</a>
+  <div class="nav-tag">EE 471 · Final Project</div>
+</header>
+
+<!-- ── CONTAINER ───────────────────────────────────────────── -->
+<div class="container">
+  <div class="form-card">
+    <h2 class="form-card-title">Welcome back!</h2>
+
+    {% if error %}
+      <div class="error-alert">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+        <span>{{ error }}</span>
+      </div>
+    {% endif %}
+
+    <form method="POST">
+      {% csrf_token %}
+      
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input type="text" id="username" name="username" required placeholder="Enter your username" autocomplete="username">
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" required placeholder="••••••••" autocomplete="current-password">
+      </div>
+
+      <button type="submit" class="btn-submit">
+        Log In →
+      </button>
+    </form>
+
+    <p class="footer-text">
+      Don't have an account? <a href="/register/">Sign up</a>
+    </p>
+    
+    <div style="margin: 1.25rem 0; display: flex; align-items: center; gap: 0.75rem;">
+      <div style="flex: 1; height: 1.5px; background: var(--border);"></div>
+      <span style="font-family: var(--font-body); font-size: 0.78rem; font-weight: 700; color: var(--muted); letter-spacing: 0.5px;">OR</span>
+      <div style="flex: 1; height: 1.5px; background: var(--border);"></div>
+    </div>
+
+    <!-- Google Button with Transparent Overlay -->
+    <div class="google-btn-wrapper">
+      <!-- Custom Neobrutalist Button -->
+      <button type="button" class="btn-social btn-google" style="pointer-events: none; width: 100%; height: 100%; position: absolute; top: 0; left: 0; margin: 0;">
+        <div class="google-circle">G</div>
+        Continue with Google
+      </button>
+      <!-- Transparent Official Button Overlay -->
+      <div id="google-official-btn" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0.01; cursor: pointer; z-index: 10;"></div>
+    </div>
+  </div>
+</div>
+
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<script>
+  function handleCredentialResponse(response) {
+    if (!response || !response.credential) {
+      alert("Google authentication returned no credentials.");
+      return;
+    }
+    submitGoogleAuth(response.credential);
+  }
+
+  async function submitGoogleAuth(idToken) {
+    try {
+      const response = await fetch('/auth/social-web/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': '{{ csrf_token }}'
+        },
+        body: JSON.stringify({
+          provider: 'google',
+          token: idToken
+        })
+      });
+
+      const result = await response.json();
+      if (response.ok && result.success) {
+        window.location.href = '/';
+      } else {
+        alert(result.error || 'Authentication failed.');
+      }
+    } catch (e) {
+      alert('Unable to connect to the server. Please try again.');
+    }
+  }
+
+  function initGoogleSignIn() {
+    if (typeof google !== 'undefined') {
+      google.accounts.id.initialize({
+        client_id: "{{ google_client_id }}",
+        callback: handleCredentialResponse
+      });
+      
+      const btnContainer = document.getElementById("google-official-btn");
+      if (btnContainer) {
+        google.accounts.id.renderButton(
+          btnContainer,
+          { 
+            theme: "outline", 
+            size: "large", 
+            width: btnContainer.offsetWidth || 350,
+            type: "standard"
+          }
+        );
+      }
+    } else {
+      setTimeout(initGoogleSignIn, 100);
+    }
+  }
+  
+  window.onload = function() {
+    initGoogleSignIn();
+  };
+</script>
+
+</body>
+</html>

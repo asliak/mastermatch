@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MasterMatch — My Favorites</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:        #faf9f6;
+      --white:     #ffffff;
+      --ink:       #1a1a1a;
+      --muted:     #7a7a7a;
+      --border:    #d8d4cc;
+
+      --mint:      #b8e8d4;
+      --mint-soft: #dff4ec;
+      --pink:      #f9c8d4;
+      --pink-soft: #fde8ed;
+      --sky:       #b8d8f0;
+      --sky-soft:  #deeef9;
+      --yellow:    #f9e8a0;
+      --peach:     #fdd5b0;
+
+      --radius-sm: 8px;
+      --radius:    16px;
+      --radius-lg: 24px;
+      --radius-pill: 100px;
+
+      --font-display: 'Playfair Display', serif;
+      --font-body:    'DM Sans', sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--font-body);
+      font-weight: 300;
+      min-height: 100vh;
+      background-image:
+        linear-gradient(rgba(0,0,0,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,0,0,0.04) 1px, transparent 1px);
+      background-size: 32px 32px;
+    }
+
+    /* ── HEADER ─────────────────────────────────────────────── */
+    header {
+      background: var(--white);
+      border-bottom: 1.5px solid var(--ink);
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .logo {
+      font-family: var(--font-display);
+      font-weight: 900;
+      font-size: 1.5rem;
+      letter-spacing: -0.03em;
+      cursor: pointer;
+    }
+    .logo span {
+      background: var(--mint);
+      padding: 0 6px;
+      border-radius: 4px;
+    }
+    .logo-link {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .nav-tag {
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      border: 1.5px solid var(--border);
+      padding: 0.35rem 1rem;
+      border-radius: var(--radius-pill);
+    }
+
+    /* ── HERO ────────────────────────────────────────────────── */
+    .hero {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 4rem 2rem 2rem;
+      text-align: center;
+      position: relative;
+    }
+
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      border: 1.5px solid var(--border);
+      background: var(--white);
+      padding: 0.4rem 1.1rem;
+      border-radius: var(--radius-pill);
+      margin-bottom: 1.8rem;
+    }
+    .hero-eyebrow::before { content: '✦'; color: var(--ink); font-size: 0.6rem; }
+
+    h1 {
+      font-family: var(--font-display);
+      font-size: clamp(2.5rem, 6vw, 4.5rem);
+      font-weight: 900;
+      line-height: 1.1;
+      letter-spacing: -0.03em;
+      margin-bottom: 1.4rem;
+    }
+
+    .hl-pink   { background: var(--pink);   padding: 0 10px 4px; border-radius: 6px; font-style: normal; }
+
+    /* ── MAIN LAYOUT ─────────────────────────────────────────── */
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 1rem 1.5rem 5rem;
+    }
+
+    /* ── RESULT CARD ─────────────────────────────────────────── */
+    .result-card {
+      background: var(--white);
+      border: 1.5px solid var(--ink);
+      border-radius: var(--radius-lg);
+      padding: 1.6rem;
+      margin-bottom: 1rem;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 1.2rem;
+      align-items: start;
+      box-shadow: 4px 4px 0 var(--ink);
+      position: relative;
+      padding-left: 1.8rem;
+      opacity: 0;
+      transform: translateY(12px);
+      animation: fadeUp 0.35s forwards;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .result-card:hover {
+      transform: translate(-2px, -2px);
+      box-shadow: 6px 6px 0 var(--ink);
+    }
+    .result-card::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 16px; bottom: 16px;
+      width: 4px;
+      border-radius: 4px;
+      background: var(--card-accent, var(--mint));
+    }
+
+    @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+
+    .result-card.fade-out {
+      animation: fadeOut 0.3s forwards;
+    }
+    @keyframes fadeOut {
+      to {
+        opacity: 0;
+        transform: scale(0.95) translateY(10px);
+      }
+    }
+
+    .card-title {
+      font-family: var(--font-display);
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin-bottom: 0.15rem;
+    }
+    .card-uni {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-bottom: 0.9rem;
+    }
+
+    .card-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-bottom: 0.8rem;
+    }
+    .pill {
+      font-size: 0.72rem;
+      font-weight: 500;
+      padding: 0.22rem 0.7rem;
+      border-radius: var(--radius-pill);
+      border: 1.5px solid var(--ink);
+    }
+    .pill-mint   { background: var(--mint);   }
+    .pill-pink   { background: var(--pink);   }
+    .pill-sky    { background: var(--sky);    }
+    .pill-yellow { background: var(--yellow); }
+    .pill-plain  { background: transparent; color: var(--muted); border-color: var(--border); }
+
+    .card-explanation {
+      font-size: 0.82rem;
+      color: var(--muted);
+      line-height: 1.55;
+      margin-top: 0.5rem;
+      font-style: italic;
+    }
+
+    .card-link {
+      display: inline-block;
+      margin-top: 0.7rem;
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: var(--ink);
+      text-decoration: none;
+      border: 1.5px solid var(--ink);
+      padding: 0.3rem 0.8rem;
+      border-radius: var(--radius-pill);
+      background: var(--white);
+      transition: background 0.15s;
+    }
+    .card-link:hover { background: var(--mint); }
+
+    /* ── FAVORITE BUTTON ─────────────────────────────────────── */
+    .favorite-btn {
+      position: absolute;
+      top: 1rem;
+      right: 1.2rem;
+      background: var(--white);
+      border: 1.5px solid var(--ink);
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s, background-color 0.15s;
+      box-shadow: 2px 2px 0 var(--ink);
+      font-size: 1.1rem;
+      user-select: none;
+      z-index: 5;
+    }
+    .favorite-btn:hover {
+      transform: translate(-1.5px, -1.5px);
+      box-shadow: 3.5px 3.5px 0 var(--ink);
+    }
+    .favorite-btn:active {
+      transform: translate(0, 0);
+      box-shadow: 1px 1px 0 var(--ink);
+    }
+    .favorite-btn.favorited {
+      background: var(--pink);
+    }
+
+    /* ── AUTH BUTTONS ────────────────────────────────────────── */
+    .nav-btn {
+      transition: transform 0.1s, box-shadow 0.1s, background-color 0.15s;
+    }
+    .nav-btn:hover { transform: translate(-1.5px, -1.5px); }
+    .nav-btn:active { transform: translate(0, 0); }
+    .btn-secondary:hover { box-shadow: 3.5px 3.5px 0 var(--ink) !important; }
+    .btn-secondary:active { box-shadow: 1px 1px 0 var(--ink) !important; }
+
+    /* ── NO RESULTS / EMPTY STATE ────────────────────────────── */
+    .no-results {
+      text-align: center;
+      padding: 3.5rem;
+      background: var(--white);
+      border: 1.5px solid var(--ink);
+      border-radius: var(--radius-lg);
+      box-shadow: 4px 4px 0 var(--ink);
+      margin-top: 1rem;
+    }
+    .no-results h3 {
+      font-family: var(--font-display);
+      font-size: 1.4rem;
+      margin-bottom: 0.6rem;
+    }
+    .no-results p { color: var(--muted); font-size: 0.95rem; margin-bottom: 1.5rem; }
+
+    .btn-home {
+      display: inline-block;
+      padding: 0.75rem 1.5rem;
+      background: var(--ink);
+      border: 1.5px solid var(--ink);
+      border-radius: var(--radius-pill);
+      color: var(--white);
+      font-family: var(--font-body);
+      font-size: 0.9rem;
+      font-weight: 500;
+      text-decoration: none;
+      transition: transform 0.15s, box-shadow 0.15s;
+      box-shadow: 3px 3px 0 var(--mint);
+    }
+    .btn-home:hover { transform: translate(-2px, -2px); box-shadow: 5px 5px 0 var(--mint); }
+    .btn-home:active { transform: translate(0,0); box-shadow: 1px 1px 0 var(--mint); }
+
+    /* ── RESPONSIVE ──────────────────────────────────────────── */
+    @media (max-width: 640px) {
+      .result-card { grid-template-columns: 1fr; }
+      h1 { font-size: 2.3rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── HEADER ──────────────────────────────────────────────── -->
+<header>
+  <div class="logo"><a href="/" class="logo-link">master<span>match</span>.</a></div>
+  <div class="nav-right" style="display: flex; align-items: center; gap: 1rem;">
+    <span class="user-welcome" style="font-size: 0.82rem; font-weight: 500; color: var(--ink);">
+      Hi, <strong>{{ user.username }}</strong>!
+    </span>
+    <a href="/" class="nav-btn btn-secondary" style="font-size: 0.78rem; font-weight: 500; text-decoration: none; color: var(--ink); border: 1.5px solid var(--ink); padding: 0.35rem 1rem; border-radius: var(--radius-pill); background: var(--mint); box-shadow: 2px 2px 0 var(--ink); display: inline-block;">Home Dashboard</a>
+    <a href="/logout/" class="nav-btn btn-secondary" style="font-size: 0.78rem; font-weight: 500; text-decoration: none; color: var(--ink); border: 1.5px solid var(--ink); padding: 0.35rem 1rem; border-radius: var(--radius-pill); background: var(--pink); box-shadow: 2px 2px 0 var(--ink); display: inline-block;">Logout</a>
+    <div class="nav-tag" style="margin-left: 0.5rem;">EE 471 · Final Project</div>
+  </div>
+</header>
+
+<!-- ── HERO ────────────────────────────────────────────────── -->
+<div class="hero">
+  <div class="hero-eyebrow">Your Saved Selections</div>
+  <h1>
+    my <span class="hl-pink">favorites.</span>
+  </h1>
+</div>
+
+<!-- ── CONTAINER ────────────────────────────────────────────── -->
+<div class="container">
+
+  <!-- Empty state -->
+  <div class="no-results" id="empty-state" style="{% if favorites %}display: none;{% endif %}">
+    <h3>No favorites saved yet</h3>
+    <p>You haven't favorited any academic programs. Try running the matching engine on the home dashboard to find programs that match your profile!</p>
+    <a href="/" class="btn-home">Find Programs →</a>
+  </div>
+
+  <!-- Favorites List -->
+  <div id="favorites-list">
+    {% for p in favorites %}
+      <div class="result-card" style="--card-accent: #b8d8f0; animation-delay: {{ forloop.index0 }}ms;" id="fav-card-{{ forloop.counter }}">
+        <div class="favorite-btn favorited" 
+             data-university="{{ p.university|escape }}" 
+             data-program="{{ p.program|escape }}"
+             data-card-id="fav-card-{{ forloop.counter }}"
+             onclick="handleUnfavoriteClick(this)"
+             title="Remove from favorites">
+          ♥
+        </div>
+        <div class="card-left">
+          <div class="card-title">{{ p.program }}</div>
+          <div class="card-uni">{{ p.university }} · {{ p.city }}, {{ p.country }}</div>
+          <div class="card-meta">
+            {% if p.tuition == 0 %}
+              <span class="pill pill-mint">Free tuition 🎉</span>
+            {% elif p.tuition < 5000 %}
+              <span class="pill pill-mint">${{ p.tuition|stringformat:"d" }}/yr</span>
+            {% elif p.tuition < 20000 %}
+              <span class="pill pill-sky">${{ p.tuition|stringformat:"d" }}/yr</span>
+            {% else %}
+              <span class="pill pill-plain">${{ p.tuition|stringformat:"d" }}/yr</span>
+            {% endif %}
+
+            <span class="pill pill-plain">GPA ≥ {{ p.min_gpa }}</span>
+            <span class="pill pill-plain">{{ p.duration }} yr{% if p.duration > 1 %}s{% endif %}</span>
+            {% if p.scholarship %}
+              <span class="pill pill-yellow">Scholarship ✓</span>
+            {% endif %}
+            <span class="pill pill-pink">Deadline: {{ p.deadline }}</span>
+            
+            {% for t in p.tags %}
+              <span class="pill pill-sky">{{ t }}</span>
+            {% endfor %}
+          </div>
+          {% if p.description %}
+            <div class="card-explanation">{{ p.description }}</div>
+          {% endif %}
+          <a class="card-link" href="{{ p.url }}" target="_blank">View Program Website →</a>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+
+</div>
+
+<script>
+  // Dynamic color assignments to cards
+  const accents = ['#b8e8d4', '#f9c8d4', '#b8d8f0', '#f9e8a0', '#fdd5b0'];
+  document.querySelectorAll('.result-card').forEach((card, idx) => {
+    card.style.setProperty('--card-accent', accents[idx % accents.length]);
+    card.style.animationDelay = `${idx * 50}ms`;
+  });
+
+  // AJAX logic to unfavorite cards directly with smooth fadeOut transition
+  async function handleUnfavoriteClick(btn) {
+    const university = btn.dataset.university;
+    const program = btn.dataset.program;
+    const cardId = btn.dataset.cardId;
+    const card = document.getElementById(cardId);
+
+    // Fade out immediately for snappy UI feel
+    if (card) {
+      card.classList.add('fade-out');
+    }
+
+    try {
+      const res = await fetch('/favorites/toggle/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          university_name: university,
+          program_name: program
+        })
+      });
+      const data = await res.json();
+      
+      if (data.success && !data.favorited) {
+        // Wait for animation to finish
+        setTimeout(() => {
+          if (card) {
+            card.remove();
+          }
+          // If no cards left, reveal empty state
+          const remainingCards = document.querySelectorAll('.result-card');
+          if (remainingCards.length === 0) {
+            document.getElementById('empty-state').style.display = 'block';
+          }
+        }, 300);
+      } else {
+        // If server failed or says it is still favorited, revert UI
+        if (card) {
+          card.classList.remove('fade-out');
+        }
+        alert("Failed to unfavorite program. Please try again.");
+      }
+    } catch (err) {
+      console.error(err);
+      if (card) {
+        card.classList.remove('fade-out');
+      }
+      alert("Failed to connect to the server.");
+    }
+  }
+</script>
+
+</body>
+</html>
