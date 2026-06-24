@@ -24,7 +24,15 @@ from .matcher_instance import get_matcher
 
 def index(request):
     profile_data = {}
+    favorites_data = []
+    
+    # Load matcher to get all loaded programs and dynamic counts
+    matcher = get_matcher()
+    num_programs = len(matcher.programs)
+    num_countries = len(set(p['country'].strip() for p in matcher.programs))
+    
     if request.user.is_authenticated:
+        # Load user profile
         profile = request.user.profile
         profile_data = {
             "field": profile.field_of_study,
@@ -34,9 +42,34 @@ def index(request):
             "career_goals": profile.career_goals,
             "countries": profile.countries_list,
         }
+        
+        # Load user favorites
+        favs = FavoriteProgram.objects.filter(user=request.user).order_by('-created_at')
+        programs_by_key = {(p['university_name'], p['program_name']): p for p in matcher.programs}
+        for f in favs:
+            p = programs_by_key.get((f.university_name, f.program_name))
+            if p:
+                favorites_data.append({
+                    "university": p["university_name"],
+                    "program": p["program_name"],
+                    "country": p["country"],
+                    "city": p["city"],
+                    "tuition": p["tuition_usd_year"],
+                    "min_gpa": p["min_gpa"],
+                    "duration": p["duration_years"],
+                    "field_tags": p["field_tags"],
+                    "scholarship": p["scholarship_available"],
+                    "deadline": p["deadline_month"],
+                    "url": p["program_url"],
+                    "description": p["description"],
+                })
+
     return render(request, "index.html", {
         "profile_data_json": json.dumps(profile_data),
-        "profile": request.user.profile if request.user.is_authenticated else None
+        "profile": request.user.profile if request.user.is_authenticated else None,
+        "num_programs": num_programs,
+        "num_countries": num_countries,
+        "favorites_data_json": json.dumps(favorites_data),
     })
 
 def login_view(request):
@@ -127,7 +160,7 @@ def match_view(request):
         user_prof.save()
         
     matcher = get_matcher()
-    results = matcher.match(profile, top_n=10)
+    results = matcher.match(profile, top_n=20)
     
     # Add favorites status
     if request.user.is_authenticated:
@@ -142,6 +175,29 @@ def match_view(request):
             r["is_favorited"] = False
             
     return JsonResponse(results, safe=False)
+
+
+@csrf_exempt
+def save_profile_view(request):
+    if not request.user.is_authenticated:
+        return JsonResponse({"error": "Authentication required"}, status=401)
+        
+    if request.method != "POST":
+        return JsonResponse({"error": "POST method required"}, status=400)
+        
+    try:
+        data = json.loads(request.body)
+        profile = request.user.profile
+        profile.field_of_study = data.get("field", "")
+        profile.gpa = float(data.get("gpa", 0) or 0)
+        profile.budget = float(data.get("budget", 999999) or 999999)
+        profile.interests = data.get("interests", "")
+        profile.career_goals = data.get("career_goals", "")
+        profile.countries_list = data.get("countries", [])
+        profile.save()
+        return JsonResponse({"success": True})
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=400)
 
 
 # ------------------------------------------------------------------
@@ -241,7 +297,7 @@ class APIMatchView(APIView):
                 pass # Invalid token, do not save but still allow matching
                 
         matcher = get_matcher()
-        results = matcher.match(profile, top_n=10)
+        results = matcher.match(profile, top_n=20)
         
         # Add favorites status
         if auth_user:

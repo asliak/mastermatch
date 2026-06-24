@@ -8,6 +8,7 @@ urlpatterns = [
     path('register/', views.register_view, name='register'),
     path('logout/', views.logout_view, name='logout'),
     path('match', views.match_view, name='match'), # Web AJAX match endpoint
+    path('profile/save', views.save_profile_view, name='save_profile'),
     
     path('favorites/', views.favorites_list_view, name='favorites_list'),
     path('favorites/toggle/', views.toggle_favorite_view, name='toggle_favorite'),

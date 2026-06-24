@@ -33,3 +33,6 @@ build/
 .flutter-plugins
 .flutter-plugins-dependencies
 *.packages
+
+# Docker database volume
+docker_data/

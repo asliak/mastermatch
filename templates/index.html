@@ -22,6 +22,7 @@
       --sky-soft:  #deeef9;
       --yellow:    #f9e8a0;
       --peach:     #fdd5b0;
+      --peach-soft:#fff5ea;
 
       --radius-sm: 8px;
       --radius:    16px;
@@ -537,6 +538,470 @@
     .favorite-btn.favorited {
       background: var(--pink);
     }
+    .sidebar-drawer {
+      position: fixed;
+      top: 0;
+      right: -520px; /* Hidden by default + outline space */
+      width: 480px;
+      max-width: 100vw;
+      height: 100vh;
+      background: var(--white);
+      border-left: 2px solid var(--ink);
+      box-shadow: -5px 0 0 var(--ink);
+      z-index: 1000;
+      transition: right 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .sidebar-drawer.open {
+      right: 0;
+    }
+    
+    /* Overlay background */
+    .drawer-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.4);
+      z-index: 999;
+      display: none;
+      opacity: 0;
+      transition: opacity 0.25s ease;
+    }
+    .drawer-overlay.show {
+      display: block;
+      opacity: 1;
+    }
+    
+    /* Sidebar Header */
+    .sidebar-header {
+      padding: 1.2rem 1.5rem;
+      border-bottom: 2px solid var(--ink);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--bg);
+    }
+    .sidebar-logo {
+      font-family: var(--font-display);
+      font-weight: 900;
+      font-size: 1.3rem;
+      letter-spacing: -0.02em;
+    }
+    .sidebar-logo span {
+      background: var(--mint);
+      padding: 0 4px;
+      border-radius: 2px;
+    }
+    .close-btn {
+      background: var(--white);
+      border: 1.5px solid var(--ink);
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 2px 2px 0 var(--ink);
+      font-size: 1.1rem;
+      font-weight: bold;
+      transition: transform 0.1s, box-shadow 0.1s;
+    }
+    .close-btn:hover {
+      transform: translate(-1px, -1px);
+      box-shadow: 3px 3px 0 var(--ink);
+    }
+    .close-btn:active {
+      transform: translate(0, 0);
+      box-shadow: 1px 1px 0 var(--ink);
+    }
+    
+    /* Sidebar Navigation Tabs */
+    .sidebar-tabs {
+      display: flex;
+      border-bottom: 2px solid var(--ink);
+      background: var(--white);
+    }
+    .sidebar-tab-btn {
+      flex: 1;
+      padding: 0.9rem 0.5rem;
+      background: transparent;
+      border: none;
+      border-right: 1.5px solid var(--border);
+      font-family: var(--font-body);
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.35rem;
+      transition: background-color 0.15s, color 0.15s;
+      outline: none;
+    }
+    .sidebar-tab-btn:last-child {
+      border-right: none;
+    }
+    .sidebar-tab-btn:hover {
+      background: var(--bg);
+      color: var(--ink);
+    }
+    #tab-btn-profile.active {
+      background: var(--mint-soft);
+      color: var(--ink);
+      font-weight: 700;
+      border-bottom: 3px solid var(--mint);
+    }
+    #tab-btn-calendar.active {
+      background: var(--sky-soft);
+      color: var(--ink);
+      font-weight: 700;
+      border-bottom: 3px solid var(--sky);
+    }
+    #tab-btn-notes.active {
+      background: var(--pink-soft);
+      color: var(--ink);
+      font-weight: 700;
+      border-bottom: 3px solid var(--pink);
+    }
+    
+    /* Sidebar Body Content */
+    .sidebar-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1.5rem;
+      background: var(--bg);
+    }
+    
+    /* Modify existing widget styles to fit in the sidebar */
+    .sidebar-body .form-card {
+      padding: 1.25rem;
+      border-radius: var(--radius);
+      box-shadow: 3px 3px 0 var(--ink);
+      margin-bottom: 1.5rem;
+      background: var(--white);
+      border: 1.5px solid var(--ink);
+    }
+    .sidebar-body .form-grid {
+      grid-template-columns: 1fr; /* Single column inside sidebar */
+      gap: 1rem;
+    }
+    .sidebar-body .calendar-box {
+      padding: 1.1rem;
+      border-radius: var(--radius);
+      box-shadow: 3px 3px 0 var(--ink);
+      margin-bottom: 1.5rem;
+    }
+    .sidebar-body .calendar-grid {
+      gap: 0.35rem;
+      margin-top: 0.8rem;
+    }
+    .sidebar-body .calendar-day-cell {
+      font-size: 0.78rem;
+    }
+    .sidebar-body .note-card {
+      padding: 1.1rem;
+      border-radius: var(--radius);
+      box-shadow: 3px 3px 0 var(--ink);
+      margin-bottom: 1.2rem;
+    }
+    .tab-content {
+      display: none;
+    }
+    .tab-content.active {
+      display: block;
+    }orite-btn:active {
+      transform: translate(0, 0);
+      box-shadow: 1px 1px 0 var(--ink);
+    }
+    .favorite-btn.favorited {
+      background: var(--pink);
+    }
+
+    /* ── TABS NAVIGATION ─────────────────────────────────────── */
+    .tabs-nav {
+      display: flex;
+      gap: 0.8rem;
+      margin-bottom: 2.5rem;
+      flex-wrap: wrap;
+      border-bottom: 1.5px solid var(--border);
+      padding-bottom: 1.25rem;
+    }
+    .tab-btn {
+      background: var(--white);
+      border: 1.5px solid var(--ink);
+      border-radius: var(--radius-pill);
+      padding: 0.6rem 1.3rem;
+      font-family: var(--font-body);
+      font-size: 0.85rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: transform 0.1s, box-shadow 0.1s, background-color 0.15s;
+      box-shadow: 3px 3px 0 var(--ink);
+      color: var(--ink);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      outline: none;
+    }
+    .tab-btn:hover {
+      transform: translate(-1.5px, -1.5px);
+      box-shadow: 4.5px 4.5px 0 var(--ink);
+    }
+    .tab-btn:active {
+      transform: translate(0, 0);
+      box-shadow: 1px 1px 0 var(--ink);
+    }
+    .tab-btn.active {
+      background: var(--mint);
+      font-weight: 700;
+      box-shadow: 2px 2px 0 var(--ink);
+      transform: translate(1px, 1px);
+    }
+    .tab-content {
+      display: none;
+    }
+    .tab-content.active {
+      display: block;
+    }
+
+    /* ── CALENDAR ────────────────────────────────────────────── */
+    .calendar-box {
+      background: var(--white);
+      border: 1.5px solid var(--ink);
+      border-radius: var(--radius-lg);
+      padding: 2rem;
+      box-shadow: 5px 5px 0 var(--ink);
+      margin-bottom: 2.5rem;
+    }
+    .calendar-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+    }
+    .calendar-nav-btn {
+      background: var(--white);
+      border: 1.5px solid var(--ink);
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 2px 2px 0 var(--ink);
+      font-size: 1.2rem;
+      font-weight: bold;
+      transition: transform 0.1s, box-shadow 0.1s;
+    }
+    .calendar-nav-btn:hover {
+      transform: translate(-1px, -1px);
+      box-shadow: 3px 3px 0 var(--ink);
+    }
+    .calendar-nav-btn:active {
+      transform: translate(0, 0);
+      box-shadow: 1px 1px 0 var(--ink);
+    }
+    .calendar-title {
+      font-family: var(--font-display);
+      font-size: 1.4rem;
+      font-weight: 700;
+    }
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 0.6rem;
+      margin-top: 1rem;
+    }
+    .weekday-lbl {
+      text-align: center;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding-bottom: 0.5rem;
+      border-bottom: 1.5px solid var(--ink);
+    }
+    .calendar-day-cell {
+      aspect-ratio: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      font-weight: 400;
+      border-radius: var(--radius-sm);
+      border: 1.5px solid transparent;
+      transition: all 0.15s;
+    }
+    .calendar-day-cell.has-deadline {
+      background: var(--pink);
+      border-color: var(--ink);
+      font-weight: 700;
+      box-shadow: 2px 2px 0 var(--ink);
+    }
+    .calendar-day-cell.empty {
+      opacity: 0.2;
+    }
+    
+    /* Deadlines List */
+    .deadlines-section-title {
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 1rem;
+    }
+    .deadline-card {
+      background: var(--white);
+      border: 1.5px solid var(--ink);
+      border-radius: var(--radius);
+      padding: 1.2rem;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 3px 3px 0 var(--ink);
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .deadline-card:hover {
+      transform: translate(-1.5px, -1.5px);
+      box-shadow: 4.5px 4.5px 0 var(--ink);
+    }
+    .deadline-info {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .deadline-icon-wrapper {
+      background: var(--mint-soft);
+      border: 1.5px solid var(--ink);
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+    }
+    .deadline-uni {
+      font-family: var(--font-display);
+      font-size: 1rem;
+      font-weight: 700;
+    }
+    .deadline-prog {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-top: 0.15rem;
+    }
+    .deadline-badge {
+      background: var(--yellow);
+      border: 1.5px solid var(--ink);
+      border-radius: 6px;
+      padding: 0.3rem 0.6rem;
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .no-deadlines-card {
+      background: var(--white);
+      border: 1.5px dashed var(--border);
+      border-radius: var(--radius);
+      padding: 2.5rem;
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    /* ── NOTES ───────────────────────────────────────────────── */
+    .note-card {
+      background: var(--white);
+      border: 1.5px solid var(--ink);
+      border-radius: var(--radius-lg);
+      padding: 1.6rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 4px 4px 0 var(--ink);
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .note-card:hover {
+      transform: translate(-1.5px, -1.5px);
+      box-shadow: 5.5px 5.5px 0 var(--ink);
+    }
+    .note-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 1rem;
+    }
+    .note-title-wrap {
+      flex: 1;
+      padding-right: 1rem;
+    }
+    .note-uni {
+      font-family: var(--font-display);
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 0.15rem;
+    }
+    .note-prog {
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+    .note-textarea-wrap {
+      background: var(--bg);
+      border: 1.5px solid var(--ink);
+      border-radius: var(--radius-sm);
+      padding: 0.5rem;
+      margin-top: 0.5rem;
+    }
+    .note-textarea {
+      background: transparent;
+      border: none;
+      outline: none;
+      width: 100%;
+      height: 100px;
+      resize: vertical;
+      font-family: var(--font-body);
+      font-size: 0.9rem;
+      line-height: 1.5;
+      color: var(--ink);
+      padding: 0.5rem;
+    }
+    .note-textarea:focus {
+      box-shadow: none;
+    }
+    .note-status-wrap {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 0.4rem;
+      margin-top: 0.5rem;
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--muted);
+    }
+    .note-status-success {
+      color: #2e7d32;
+    }
+    .note-spinner {
+      border: 1.5px solid var(--muted);
+      border-radius: 50%;
+      border-top: 1.5px solid var(--ink);
+      width: 10px;
+      height: 10px;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
 
     /* ── RESPONSIVE ──────────────────────────────────────────── */
     @media (max-width: 640px) {
@@ -552,16 +1017,22 @@
 <!-- ── HEADER ──────────────────────────────────────────────── -->
 <header>
   <div class="logo">master<span>match</span>.</div>
-  <div class="nav-right" style="display: flex; align-items: center; gap: 1rem;">
+  <div class="nav-right" style="display: flex; align-items: center; gap: 0.8rem; flex-wrap: wrap;">
     {% if user.is_authenticated %}
-      <span class="user-welcome" style="font-size: 0.82rem; font-weight: 500; color: var(--ink);">
+      <span class="user-welcome" style="font-size: 0.82rem; font-weight: 500; color: var(--ink); margin-right: 0.4rem;">
         Hi, <strong>{{ user.username }}</strong>!
       </span>
-      <a href="/favorites/" class="nav-btn btn-secondary" style="font-size: 0.78rem; font-weight: 500; text-decoration: none; color: var(--ink); border: 1.5px solid var(--ink); padding: 0.35rem 1rem; border-radius: var(--radius-pill); background: var(--yellow); box-shadow: 2px 2px 0 var(--ink); display: inline-block; margin-right: 0.2rem;">My Favorites</a>
-      <a href="/logout/" class="nav-btn btn-secondary" style="font-size: 0.78rem; font-weight: 500; text-decoration: none; color: var(--ink); border: 1.5px solid var(--ink); padding: 0.35rem 1rem; border-radius: var(--radius-pill); background: var(--pink); box-shadow: 2px 2px 0 var(--ink); display: inline-block;">Logout</a>
+      <button onclick="openSidebar('profile')" class="nav-btn btn-secondary" style="font-size: 0.78rem; font-weight: 700; color: var(--ink); border: 1.5px solid var(--ink); padding: 0.35rem 1.1rem; border-radius: var(--radius-pill); background: var(--mint); box-shadow: 2px 2px 0 var(--ink); display: inline-block; margin-right: 0.2rem; cursor: pointer; outline: none;">Profile</button>
+      <button onclick="openSidebar('calendar')" class="nav-btn btn-secondary" style="font-size: 0.78rem; font-weight: 700; color: var(--ink); border: 1.5px solid var(--ink); padding: 0.35rem 1.1rem; border-radius: var(--radius-pill); background: var(--sky); box-shadow: 2px 2px 0 var(--ink); display: inline-block; margin-right: 0.2rem; cursor: pointer; outline: none;">Calendar</button>
+      <button onclick="openSidebar('notes')" class="nav-btn btn-secondary" style="font-size: 0.78rem; font-weight: 700; color: var(--ink); border: 1.5px solid var(--ink); padding: 0.35rem 1.1rem; border-radius: var(--radius-pill); background: var(--pink); box-shadow: 2px 2px 0 var(--ink); display: inline-block; margin-right: 0.2rem; cursor: pointer; outline: none;">Notes</button>
+      <a href="/favorites/" class="nav-btn btn-secondary" style="font-size: 0.78rem; font-weight: 700; text-decoration: none; color: var(--ink); border: 1.5px solid var(--ink); padding: 0.35rem 1.1rem; border-radius: var(--radius-pill); background: var(--yellow); box-shadow: 2px 2px 0 var(--ink); display: inline-block; margin-right: 0.2rem;">My Favorites</a>
+      <a href="/logout/" class="nav-btn btn-secondary" style="font-size: 0.78rem; font-weight: 700; text-decoration: none; color: var(--ink); border: 1.5px solid var(--ink); padding: 0.35rem 1.1rem; border-radius: var(--radius-pill); background: var(--pink); box-shadow: 2px 2px 0 var(--ink); display: inline-block;">Logout</a>
     {% else %}
-      <a href="/login/" class="nav-btn" style="font-size: 0.78rem; font-weight: 500; text-decoration: none; color: var(--ink); border: 1.5px solid var(--border); padding: 0.35rem 1rem; border-radius: var(--radius-pill); background: var(--white); display: inline-block;">Login</a>
-      <a href="/register/" class="nav-btn btn-primary" style="font-size: 0.78rem; font-weight: 500; text-decoration: none; color: var(--white); border: 1.5px solid var(--ink); padding: 0.35rem 1rem; border-radius: var(--radius-pill); background: var(--ink); box-shadow: 2px 2px 0 var(--mint); display: inline-block;">Register</a>
+      <button onclick="openSidebar('profile')" class="nav-btn btn-secondary" style="font-size: 0.78rem; font-weight: 700; color: var(--ink); border: 1.5px solid var(--ink); padding: 0.35rem 1.1rem; border-radius: var(--radius-pill); background: var(--mint); box-shadow: 2px 2px 0 var(--ink); display: inline-block; margin-right: 0.2rem; cursor: pointer; outline: none;">Profile</button>
+      <button onclick="openSidebar('calendar')" class="nav-btn btn-secondary" style="font-size: 0.78rem; font-weight: 700; color: var(--ink); border: 1.5px solid var(--ink); padding: 0.35rem 1.1rem; border-radius: var(--radius-pill); background: var(--sky); box-shadow: 2px 2px 0 var(--ink); display: inline-block; margin-right: 0.2rem; cursor: pointer; outline: none;">Calendar</button>
+      <button onclick="openSidebar('notes')" class="nav-btn btn-secondary" style="font-size: 0.78rem; font-weight: 700; color: var(--ink); border: 1.5px solid var(--ink); padding: 0.35rem 1.1rem; border-radius: var(--radius-pill); background: var(--pink); box-shadow: 2px 2px 0 var(--ink); display: inline-block; margin-right: 0.2rem; cursor: pointer; outline: none;">Notes</button>
+      <a href="/login/" class="nav-btn" style="font-size: 0.78rem; font-weight: 500; text-decoration: none; color: var(--ink); border: 1.5px solid var(--border); padding: 0.35rem 1.1rem; border-radius: var(--radius-pill); background: var(--white); display: inline-block;">Login</a>
+      <a href="/register/" class="nav-btn btn-primary" style="font-size: 0.78rem; font-weight: 500; text-decoration: none; color: var(--white); border: 1.5px solid var(--ink); padding: 0.35rem 1.1rem; border-radius: var(--radius-pill); background: var(--ink); box-shadow: 2px 2px 0 var(--mint); display: inline-block;">Register</a>
     {% endif %}
     <div class="nav-tag" style="margin-left: 0.5rem;">EE 471 · Final Project</div>
   </div>
@@ -569,8 +1040,8 @@
 
 <!-- ── HERO ────────────────────────────────────────────────── -->
 <div class="hero">
-  <div class="float-tag ft1">🎓 64 programs</div>
-  <div class="float-tag ft2">🌍 13 countries</div>
+  <div class="float-tag ft1">🎓 {{ num_programs }} programs</div>
+  <div class="float-tag ft2">🌍 {{ num_countries }} countries</div>
   <div class="float-tag ft3">✦ AI-powered</div>
 
   <div class="hero-eyebrow">Find your master's program abroad</div>
@@ -591,7 +1062,7 @@
 <div class="ticker-wrap">
   <div class="ticker-inner">
     <span>Find your program</span>
-    <span>64 universities worldwide</span>
+    <span>{{ num_programs }} universities worldwide</span>
     <span>AI-powered matching</span>
     <span>Electrical Engineering</span>
     <span>Computer Science</span>
@@ -602,7 +1073,7 @@
     <span>Communications Engineering</span>
     <!-- duplicate for seamless loop -->
     <span>Find your program</span>
-    <span>64 universities worldwide</span>
+    <span>{{ num_programs }} universities worldwide</span>
     <span>AI-powered matching</span>
     <span>Electrical Engineering</span>
     <span>Computer Science</span>
@@ -719,7 +1190,215 @@
 
 </div>
 
+<!-- ── DRAWER OVERLAY ── -->
+<div id="drawer-overlay" class="drawer-overlay" onclick="closeSidebar()"></div>
+
+<!-- ── SLIDING SIDEBAR DRAWER ── -->
+<div id="sidebar-drawer" class="sidebar-drawer">
+  <!-- Sidebar Header -->
+  <div class="sidebar-header">
+    <div class="sidebar-logo">master<span>match</span>.</div>
+    <button class="close-btn" onclick="closeSidebar()">×</button>
+  </div>
+  
+  <!-- Sidebar Tabs Navigation -->
+  <div class="sidebar-tabs">
+    <button class="sidebar-tab-btn" id="tab-btn-profile" onclick="switchSidebarTab('profile')">Profile</button>
+    <button class="sidebar-tab-btn" id="tab-btn-calendar" onclick="switchSidebarTab('calendar')">Calendar</button>
+    <button class="sidebar-tab-btn" id="tab-btn-notes" onclick="switchSidebarTab('notes')">Notes</button>
+  </div>
+  
+  <!-- Sidebar Body -->
+  <div class="sidebar-body">
+    
+    <!-- ── PROFILE TAB CONTENT ── -->
+    <div id="tab-profile" class="tab-content">
+      {% if user.is_authenticated %}
+        <div class="form-card">
+          <div class="form-card-title">
+            👤 Update Profile Settings
+          </div>
+          <p style="font-size: 0.85rem; color: var(--muted); margin-bottom: 1.2rem; line-height: 1.5;">
+            Keep your information up to date so your academic recommendations stay relevant. Changes saved here will be synchronized across both your web and mobile applications.
+          </p>
+          
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Field of Study</label>
+              <select id="profile-field">
+                <option value="">Select a field…</option>
+                <option>Electrical & Electronics Engineering</option>
+                <option>Computer Science & AI</option>
+                <option>Communications Engineering</option>
+                <option>Data Science</option>
+                <option>Robotics & Embedded Systems</option>
+                <option>Biomedical Engineering</option>
+                <option>Energy & Power Systems</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>GPA (out of 4.0)</label>
+              <input type="number" id="profile-gpa" min="0" max="4" step="0.1" placeholder="e.g. 3.2" />
+            </div>
+            <div class="form-group">
+              <label>Max Tuition Budget (USD / year)</label>
+              <input type="number" id="profile-budget" step="1000" placeholder="Leave blank for any budget" />
+            </div>
+            <div class="form-group">
+              <label>Specific Interests</label>
+              <input type="text" id="profile-interests" placeholder="e.g. machine learning, 5G, signal processing" />
+            </div>
+            <div class="form-group full">
+              <label>Career Goals</label>
+              <textarea id="profile-career_goals" placeholder="e.g. I want to work in AI research or join a tech company in Europe after graduation…"></textarea>
+            </div>
+            <div class="form-group full">
+              <label>Preferred Countries <span style="font-size:0.7rem;opacity:0.5;text-transform:none;letter-spacing:0">— leave blank for any</span></label>
+              <div class="chip-grid" id="profile-country-chips">
+                <div class="chip" data-value="Germany">🇩🇪 Germany</div>
+                <div class="chip" data-value="Netherlands">🇳🇱 Netherlands</div>
+                <div class="chip" data-value="Sweden">🇸🇪 Sweden</div>
+                <div class="chip" data-value="Finland">🇫🇮 Finland</div>
+                <div class="chip" data-value="Switzerland">🇨🇭 Switzerland</div>
+                <div class="chip" data-value="UK">🇬🇧 UK</div>
+                <div class="chip" data-value="Canada">🇨🇦 Canada</div>
+                <div class="chip" data-value="USA">🇺🇸 USA</div>
+                <div class="chip" data-value="Italy">🇮🇹 Italy</div>
+                <div class="chip" data-value="Singapore">🇸🇬 Singapore</div>
+                <div class="chip" data-value="Australia">🇦🇺 Australia</div>
+                <div class="chip" data-value="Denmark">🇩🇰 Denmark</div>
+                <div class="chip" data-value="Poland">🇵🇱 Poland</div>
+                <div class="chip" data-value="Czech Republic">🇨🇿 Czech Republic</div>
+                <div class="chip" data-value="Hungary">🇭🇺 Hungary</div>
+                <div class="chip" data-value="Estonia">🇪🇪 Estonia</div>
+                <div class="chip" data-value="Spain">🇪🇸 Spain</div>
+                <div class="chip" data-value="Serbia">🇷🇸 Serbia</div>
+                <div class="chip" data-value="Cyprus">🇨🇾 Cyprus</div>
+              </div>
+            </div>
+          </div>
+          
+          <div style="display: flex; flex-direction: column; gap: 0.8rem; margin-top: 1.5rem;">
+            <div id="profile-save-status" style="font-size: 0.82rem; font-weight: 600; display: none;"></div>
+            <button class="btn-match" id="profile-save-btn" onclick="saveProfile()" style="margin-top: 0; width: 100%; padding: 0.8rem 1.5rem;">
+              Save Profile & Sync ✓
+            </button>
+          </div>
+        </div>
+      {% else %}
+        <!-- Guest Warning Card -->
+        <div class="guest-card" style="background: var(--white); border: 1.5px solid var(--ink); border-radius: var(--radius-lg); padding: 2rem; text-align: center; box-shadow: 4px 4px 0 var(--ink); margin-top: 1rem;">
+          <div style="background: var(--pink-soft); border: 1.5px solid var(--ink); display: inline-flex; padding: 0.8rem; border-radius: 50%; margin-bottom: 1.2rem; font-size: 1.8rem; box-shadow: 2px 2px 0 var(--ink);">
+            🔒
+          </div>
+          <h3 style="font-family: var(--font-display); font-size: 1.3rem; font-weight: 700; margin-bottom: 0.6rem;">Account Required</h3>
+          <p style="font-size: 0.85rem; color: var(--muted); line-height: 1.5; margin-bottom: 1.5rem;">
+            You are currently in Guest Mode. Please log in or create an account to view and edit your profile settings.
+          </p>
+          <a href="/login/" class="nav-btn btn-primary" style="font-size: 0.8rem; font-weight: 700; text-decoration: none; color: var(--white); border: 1.5px solid var(--ink); padding: 0.7rem 1.5rem; border-radius: var(--radius-pill); background: var(--ink); box-shadow: 2.5px 2.5px 0 var(--mint); display: inline-block;">
+            Log In / Register
+          </a>
+        </div>
+      {% endif %}
+    </div>
+    
+    <!-- ── CALENDAR TAB CONTENT ── -->
+    <div id="tab-calendar" class="tab-content">
+      {% if user.is_authenticated %}
+        <div class="calendar-box">
+          <div class="calendar-header">
+            <div class="calendar-nav-btn" onclick="changeMonth(-1)">‹</div>
+            <div class="calendar-title" id="calendar-month-title">January 2026</div>
+            <div class="calendar-nav-btn" onclick="changeMonth(1)">›</div>
+          </div>
+          
+          <div class="calendar-grid" id="calendar-weekdays-grid">
+            <div class="weekday-lbl">Sun</div>
+            <div class="weekday-lbl">Mon</div>
+            <div class="weekday-lbl">Tue</div>
+            <div class="weekday-lbl">Wed</div>
+            <div class="weekday-lbl">Thu</div>
+            <div class="weekday-lbl">Fri</div>
+            <div class="weekday-lbl">Sat</div>
+          </div>
+          <div class="calendar-grid" id="calendar-days-grid">
+            <!-- Populated by JavaScript -->
+          </div>
+        </div>
+        
+        <div class="deadlines-section-title" id="deadlines-month-header">DEADLINES FOR JANUARY</div>
+        <div id="deadlines-list" style="margin-bottom: 2rem;">
+          <!-- Populated by JavaScript -->
+        </div>
+      {% else %}
+        <!-- Guest Warning Card -->
+        <div class="guest-card" style="background: var(--white); border: 1.5px solid var(--ink); border-radius: var(--radius-lg); padding: 2rem; text-align: center; box-shadow: 4px 4px 0 var(--ink); margin-top: 1rem;">
+          <div style="background: var(--pink-soft); border: 1.5px solid var(--ink); display: inline-flex; padding: 0.8rem; border-radius: 50%; margin-bottom: 1.2rem; font-size: 1.8rem; box-shadow: 2px 2px 0 var(--ink);">
+            🔒
+          </div>
+          <h3 style="font-family: var(--font-display); font-size: 1.3rem; font-weight: 700; margin-bottom: 0.6rem;">Account Required</h3>
+          <p style="font-size: 0.85rem; color: var(--muted); line-height: 1.5; margin-bottom: 1.5rem;">
+            You are currently in Guest Mode. Please log in or create an account to view application deadlines for your target universities.
+          </p>
+          <a href="/login/" class="nav-btn btn-primary" style="font-size: 0.8rem; font-weight: 700; text-decoration: none; color: var(--white); border: 1.5px solid var(--ink); padding: 0.7rem 1.5rem; border-radius: var(--radius-pill); background: var(--ink); box-shadow: 2.5px 2.5px 0 var(--mint); display: inline-block;">
+            Log In / Register
+          </a>
+        </div>
+      {% endif %}
+    </div>
+    
+    <!-- ── NOTES TAB CONTENT ── -->
+    <div id="tab-notes" class="tab-content">
+      {% if user.is_authenticated %}
+        <div id="notes-list-container" style="margin-bottom: 2rem;">
+          <!-- Populated by JavaScript -->
+        </div>
+      {% else %}
+        <!-- Guest Warning Card -->
+        <div class="guest-card" style="background: var(--white); border: 1.5px solid var(--ink); border-radius: var(--radius-lg); padding: 2rem; text-align: center; box-shadow: 4px 4px 0 var(--ink); margin-top: 1rem;">
+          <div style="background: var(--pink-soft); border: 1.5px solid var(--ink); display: inline-flex; padding: 0.8rem; border-radius: 50%; margin-bottom: 1.2rem; font-size: 1.8rem; box-shadow: 2px 2px 0 var(--ink);">
+            🔒
+          </div>
+          <h3 style="font-family: var(--font-display); font-size: 1.3rem; font-weight: 700; margin-bottom: 0.6rem;">Account Required</h3>
+          <p style="font-size: 0.85rem; color: var(--muted); line-height: 1.5; margin-bottom: 1.5rem;">
+            You are currently in Guest Mode. Please log in or create an account to write tasks and notes for your target master's programs.
+          </p>
+          <a href="/login/" class="nav-btn btn-primary" style="font-size: 0.8rem; font-weight: 700; text-decoration: none; color: var(--white); border: 1.5px solid var(--ink); padding: 0.7rem 1.5rem; border-radius: var(--radius-pill); background: var(--ink); box-shadow: 2.5px 2.5px 0 var(--mint); display: inline-block;">
+            Log In / Register
+          </a>
+        </div>
+      {% endif %}
+    </div>
+    
+  </div>
+</div>
+
 <script>
+  // ── Global Caches ─────────────────────────────────────────
+  let currentUserProfile = {};
+  let userFavorites = [];
+  let lastSearchResults = [];
+
+  // Parse Backend Profile Data
+  const profileJson = '{{ profile_data_json|escapejs }}';
+  if (profileJson) {
+    try {
+      currentUserProfile = JSON.parse(profileJson);
+    } catch (e) {
+      console.error("Error parsing profile data:", e);
+    }
+  }
+
+  // Parse Backend Favorites Data
+  const favoritesJson = '{{ favorites_data_json|escapejs }}';
+  if (favoritesJson) {
+    try {
+      userFavorites = JSON.parse(favoritesJson);
+    } catch (e) {
+      console.error("Error parsing favorites data:", e);
+    }
+  }
+
   // ── Chip toggle ───────────────────────────────────────────
   document.querySelectorAll('.chip').forEach(chip => {
     chip.addEventListener('click', () => chip.classList.toggle('active'));
@@ -743,10 +1422,358 @@
     return `<span class="pill pill-plain">$${t.toLocaleString()}/yr</span>`;
   }
 
-  // ── Render results ────────────────────────────────────────
+  // ── Sidebar Toggle Logic ──────────────────────────────────
+  function openSidebar(section) {
+    const drawer = document.getElementById('sidebar-drawer');
+    const overlay = document.getElementById('drawer-overlay');
+    if (!drawer || !overlay) return;
+
+    overlay.style.display = 'block';
+    // Force layout reflow for CSS transition
+    overlay.offsetHeight;
+
+    drawer.classList.add('open');
+    overlay.classList.add('show');
+
+    // Open to the specific tab
+    switchSidebarTab(section);
+  }
+
+  function closeSidebar() {
+    const drawer = document.getElementById('sidebar-drawer');
+    const overlay = document.getElementById('drawer-overlay');
+    if (!drawer || !overlay) return;
+
+    drawer.classList.remove('open');
+    overlay.classList.remove('show');
+
+    // Hide overlay display after slide-out transition completes
+    setTimeout(() => {
+      if (!drawer.classList.contains('open')) {
+        overlay.style.display = 'none';
+      }
+    }, 300);
+  }
+
+  // ── Sidebar Tab Switching ─────────────────────────────────
+  function switchSidebarTab(tabId) {
+    // Hide all tab contents and remove active states
+    document.querySelectorAll('.sidebar-drawer .tab-content').forEach(content => {
+      content.classList.remove('active');
+    });
+    document.querySelectorAll('.sidebar-tab-btn').forEach(btn => {
+      btn.classList.remove('active');
+    });
+
+    // Show selected tab content and activate button
+    const activeContent = document.getElementById('tab-' + tabId);
+    const activeBtn = document.getElementById('tab-btn-' + tabId);
+    if (activeContent) {
+      activeContent.classList.add('active');
+    }
+    if (activeBtn) {
+      activeBtn.classList.add('active');
+    }
+
+    // Initialize specific tab logic if user is authenticated
+    const isAuthenticated = {% if user.is_authenticated %}true{% else %}false{% endif %};
+    if (isAuthenticated) {
+      if (tabId === 'calendar') {
+        renderCalendar();
+      } else if (tabId === 'notes') {
+        renderNotes();
+      }
+    }
+  }
+
+  // ── Profile Summary Card (Defensive Implementation) ───────
+  function updateProfileSummary() {
+    const isAuthenticated = {% if user.is_authenticated %}true{% else %}false{% endif %};
+    if (!isAuthenticated) return;
+    
+    const summaryField = document.getElementById('summary-field');
+    if (!summaryField) return; // Summary card is not present in the HTML layout
+    
+    summaryField.textContent = currentUserProfile.field || 'Not specified';
+    document.getElementById('summary-gpa').textContent = currentUserProfile.gpa ? parseFloat(currentUserProfile.gpa).toFixed(1) : '0.0';
+    document.getElementById('summary-budget').textContent = currentUserProfile.budget && currentUserProfile.budget !== 999999 ? `$${currentUserProfile.budget.toLocaleString()}/yr` : 'Any budget';
+    document.getElementById('summary-interests').textContent = currentUserProfile.interests || 'None specified';
+    document.getElementById('summary-goals').textContent = currentUserProfile.career_goals || 'None specified';
+    
+    const countriesWrap = document.getElementById('summary-countries');
+    if (countriesWrap) {
+      countriesWrap.innerHTML = '';
+      if (currentUserProfile.countries && currentUserProfile.countries.length > 0) {
+        currentUserProfile.countries.forEach(c => {
+          const span = document.createElement('span');
+          span.className = 'pill pill-mint';
+          span.textContent = c;
+          countriesWrap.appendChild(span);
+        });
+      } else {
+        countriesWrap.textContent = 'Any country';
+      }
+    }
+  }
+
+  // ── Save Profile Settings ──────────────────────────────────
+  async function saveProfile() {
+    const btn = document.getElementById('profile-save-btn');
+    const statusDiv = document.getElementById('profile-save-status');
+    if (!btn || !statusDiv) return;
+    
+    const activeChips = [...document.querySelectorAll('#profile-country-chips .chip.active')]
+      .map(c => c.dataset.value);
+      
+    const profileData = {
+      field:        document.getElementById('profile-field').value,
+      gpa:          parseFloat(document.getElementById('profile-gpa').value) || 0,
+      budget:       parseFloat(document.getElementById('profile-budget').value) || 999999,
+      interests:    document.getElementById('profile-interests').value,
+      career_goals: document.getElementById('profile-career_goals').value,
+      countries:    activeChips
+    };
+    
+    btn.disabled = true;
+    statusDiv.style.display = 'block';
+    statusDiv.className = '';
+    statusDiv.style.color = 'var(--muted)';
+    statusDiv.innerHTML = '<span class="note-spinner" style="display:inline-block; margin-right:4px; vertical-align:middle;"></span> Syncing...';
+    
+    try {
+      const res = await fetch('/profile/save', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(profileData)
+      });
+      const data = await res.json();
+      
+      if (res.ok && data.success) {
+        // Update local cache
+        currentUserProfile = profileData;
+        
+        // Sync values directly to the main page form inputs
+        const setVal = (id, val) => {
+          const el = document.getElementById(id);
+          if (el) el.value = val !== undefined && val !== null ? val : '';
+        };
+        setVal('field', profileData.field);
+        setVal('gpa', profileData.gpa || '');
+        setVal('budget', profileData.budget && profileData.budget !== 999999 ? profileData.budget : '');
+        setVal('interests', profileData.interests);
+        setVal('career_goals', profileData.career_goals);
+        
+        // Sync preferred country chips on main page
+        document.querySelectorAll('#country-chips .chip').forEach(chip => {
+          if (profileData.countries.includes(chip.dataset.value)) {
+            chip.classList.add('active');
+          } else {
+            chip.classList.remove('active');
+          }
+        });
+        
+        // Populate Summary Card if it exists
+        updateProfileSummary();
+        
+        statusDiv.style.color = '#2e7d32';
+        statusDiv.innerHTML = 'Saved & Synced successfully ✓';
+        setTimeout(() => {
+          statusDiv.style.display = 'none';
+        }, 3000);
+      } else {
+        statusDiv.style.color = '#b71c1c';
+        statusDiv.textContent = data.error || 'Failed to save profile.';
+      }
+    } catch (err) {
+      console.error(err);
+      statusDiv.style.color = '#b71c1c';
+      statusDiv.textContent = 'Network error. Please try again.';
+    } finally {
+      btn.disabled = false;
+    }
+  }
+
+  // ── Deadline Calendar Logic ──────────────────────────────
+  const monthsList = [
+    'January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December'
+  ];
+  let calMonth = new Date().getMonth(); // 0-11
+  let calYear = new Date().getFullYear();
+
+  function changeMonth(dir) {
+    calMonth += dir;
+    if (calMonth < 0) {
+      calMonth = 11;
+      calYear--;
+    } else if (calMonth > 11) {
+      calMonth = 0;
+      calYear++;
+    }
+    renderCalendar();
+  }
+
+  function renderCalendar() {
+    const isAuthenticated = {% if user.is_authenticated %}true{% else %}false{% endif %};
+    if (!isAuthenticated) return;
+    
+    // Update header texts
+    document.getElementById('calendar-month-title').textContent = `${monthsList[calMonth]} ${calYear}`;
+    document.getElementById('deadlines-month-header').textContent = `DEADLINES FOR ${monthsList[calMonth].toUpperCase()}`;
+    
+    // Filter favorites by month
+    const targetMonthName = monthsList[calMonth].toLowerCase();
+    const monthlyFavorites = userFavorites.filter(f => {
+      return f.deadline && f.deadline.trim().toLowerCase() === targetMonthName;
+    });
+    
+    // Generate Calendar Grid
+    const daysGrid = document.getElementById('calendar-days-grid');
+    if (!daysGrid) return;
+    daysGrid.innerHTML = '';
+    
+    const firstDay = new Date(calYear, calMonth, 1);
+    const startWeekday = firstDay.getDay(); // Sun = 0
+    const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+    
+    // Prefill empty cells for weekday offset
+    for (let i = 0; i < startWeekday; i++) {
+      const emptyCell = document.createElement('div');
+      emptyCell.className = 'calendar-day-cell empty';
+      daysGrid.appendChild(emptyCell);
+    }
+    
+    // Render Days of the Month
+    for (let day = 1; day <= daysInMonth; day++) {
+      const dayCell = document.createElement('div');
+      dayCell.className = 'calendar-day-cell';
+      dayCell.textContent = day;
+      
+      // Highlight the 15th if we have any deadlines this month (similar to Flutter app)
+      if (day === 15 && monthlyFavorites.length > 0) {
+        dayCell.classList.add('has-deadline');
+        dayCell.title = `${monthlyFavorites.length} deadline(s) due`;
+      }
+      daysGrid.appendChild(dayCell);
+    }
+    
+    // Render Deadlines list
+    const deadlinesList = document.getElementById('deadlines-list');
+    if (!deadlinesList) return;
+    deadlinesList.innerHTML = '';
+    
+    if (monthlyFavorites.length === 0) {
+      deadlinesList.innerHTML = `
+        <div class="no-deadlines-card">
+          No deadlines in this month.
+        </div>`;
+    } else {
+      monthlyFavorites.forEach(f => {
+        const card = document.createElement('div');
+        card.className = 'deadline-card';
+        card.innerHTML = `
+          <div class="deadline-info">
+            <div class="deadline-icon-wrapper">🎓</div>
+            <div>
+              <div class="deadline-uni">${f.university}</div>
+              <div class="deadline-prog">${f.program} · ${f.city}, ${f.country}</div>
+            </div>
+          </div>
+          <div class="deadline-badge">
+            ${monthsList[calMonth].substring(0, 3)} 15
+          </div>`;
+        deadlinesList.appendChild(card);
+      });
+    }
+  }
+
+  // ── Notes Logic ───────────────────────────────────────────
+  let noteDebounces = {};
+  
+  function renderNotes() {
+    const isAuthenticated = {% if user.is_authenticated %}true{% else %}false{% endif %};
+    if (!isAuthenticated) return;
+    
+    const container = document.getElementById('notes-list-container');
+    if (!container) return;
+    container.innerHTML = '';
+    
+    if (userFavorites.length === 0) {
+      container.innerHTML = `
+        <div class="guest-card" style="background: var(--white); border: 1.5px solid var(--ink); border-radius: var(--radius-lg); padding: 3rem; text-align: center; box-shadow: 5px 5px 0 var(--ink); max-width: 500px; margin: 2rem auto;">
+          <div style="background: var(--mint-soft); border: 1.5px solid var(--ink); display: inline-flex; padding: 1rem; border-radius: 50%; margin-bottom: 1.5rem; font-size: 2.2rem; box-shadow: 2px 2px 0 var(--ink);">
+            ☆
+          </div>
+          <h3 style="font-family: var(--font-display); font-size: 1.6rem; font-weight: 700; margin-bottom: 0.8rem;">No Favorites Saved</h3>
+          <p style="font-size: 0.95rem; color: var(--muted); line-height: 1.6;">
+            Favorite programs first from the search results to start adding custom notes for them!
+          </p>
+        </div>`;
+      return;
+    }
+    
+    const username = "{% if user.is_authenticated %}{{ user.username }}{% else %}guest{% endif %}";
+    userFavorites.forEach(f => {
+      const storageKey = `note_${username}_${f.university}_${f.program}`.replace(/\s+/g, '_');
+      const savedNote = localStorage.getItem(storageKey) || '';
+      
+      const card = document.createElement('div');
+      card.className = 'note-card';
+      card.innerHTML = `
+        <div class="note-header">
+          <div class="note-title-wrap">
+            <div class="note-uni">${f.university}</div>
+            <div class="note-prog">${f.program}</div>
+          </div>
+          <div class="deadline-badge" style="background: var(--yellow);">
+            ${f.deadline}
+          </div>
+        </div>
+        <div style="font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.3rem;">
+          MY TASKS & NOTES
+        </div>
+        <div class="note-textarea-wrap">
+          <textarea class="note-textarea" 
+                    placeholder="e.g. Talk to Prof. X about letters of rec, prepare draft statement of purpose…" 
+                    data-key="${storageKey}"
+                    oninput="handleNoteInput(this)">${savedNote}</textarea>
+        </div>
+        <div class="note-status-wrap" id="status-${storageKey}">
+          Saved
+        </div>`;
+      container.appendChild(card);
+    });
+  }
+
+  function handleNoteInput(textarea) {
+    const key = textarea.dataset.key;
+    const statusDiv = document.getElementById(`status-${key}`);
+    if (!statusDiv) return;
+    
+    statusDiv.className = 'note-status-wrap';
+    statusDiv.textContent = 'Typing…';
+    
+    if (noteDebounces[key]) clearTimeout(noteDebounces[key]);
+    
+    noteDebounces[key] = setTimeout(() => {
+      statusDiv.innerHTML = '<span class="note-spinner" style="display:inline-block; vertical-align:middle;"></span> Saving...';
+      
+      localStorage.setItem(key, textarea.value);
+      
+      setTimeout(() => {
+        statusDiv.className = 'note-status-wrap note-status-success';
+        statusDiv.textContent = 'Auto-saved ✓';
+      }, 300);
+    }, 700);
+  }
+
+  // ── Render Results ────────────────────────────────────────
   function renderResults(data) {
     const list = document.getElementById('results-list');
+    if (!list) return;
     list.innerHTML = '';
+    
+    lastSearchResults = data;
 
     if (!data.length) {
       list.innerHTML = `
@@ -779,7 +1806,7 @@
              data-program="${p.program.replace(/"/g, '&quot;')}"
              onclick="handleFavoriteClick(this)"
              title="Add to favorites">
-          ${favHeart}
+           ${favHeart}
         </div>
         <div class="card-left">
           <div class="card-rank">#${i + 1} Match</div>
@@ -857,9 +1884,41 @@
         if (data.favorited) {
           btn.classList.add('favorited');
           btn.innerHTML = '♥';
+          
+          // Sync with local favorites cache
+          const matchItem = lastSearchResults.find(x => x.university === university && x.program === program);
+          if (matchItem) {
+            if (!userFavorites.some(x => x.university === university && x.program === program)) {
+              userFavorites.push({
+                university: matchItem.university,
+                program: matchItem.program,
+                country: matchItem.country,
+                city: matchItem.city,
+                tuition: matchItem.tuition,
+                min_gpa: matchItem.min_gpa,
+                duration: matchItem.duration,
+                field_tags: matchItem.field_tags,
+                scholarship: matchItem.scholarship,
+                deadline: matchItem.deadline,
+                url: matchItem.url,
+                description: matchItem.description
+              });
+            }
+          }
         } else {
           btn.classList.remove('favorited');
           btn.innerHTML = '♡';
+          
+          // Sync with local favorites cache
+          userFavorites = userFavorites.filter(x => !(x.university === university && x.program === program));
+        }
+
+        // Reactive UI updates: refresh active sidebar tabs if open
+        const activeTab = document.querySelector('.sidebar-tab-btn.active');
+        if (activeTab) {
+          const tabId = activeTab.id.replace('tab-btn-', '');
+          if (tabId === 'calendar') renderCalendar();
+          if (tabId === 'notes') renderNotes();
         }
       }
     } catch (err) {
@@ -874,22 +1933,24 @@
     }
   }
 
-  // ── Main function ─────────────────────────────────────────
+  // ── Find Matches ─────────────────────────────────────────
   async function runMatch() {
     const btn     = document.getElementById('match-btn');
     const loading = document.getElementById('loading');
     const results = document.getElementById('results');
+    if (!btn || !loading || !results) return;
 
-    const countries = [...document.querySelectorAll('.chip.active')]
+    // Read directly from the homepage form fields
+    const countries = [...document.querySelectorAll('#country-chips .chip.active')]
       .map(c => c.dataset.value);
-
+    
     const profile = {
       field:        document.getElementById('field').value,
       gpa:          parseFloat(document.getElementById('gpa').value)    || 0,
       budget:       parseFloat(document.getElementById('budget').value) || 999999,
       interests:    document.getElementById('interests').value,
       career_goals: document.getElementById('career_goals').value,
-      countries,
+      countries:    countries,
     };
 
     btn.disabled = true;
@@ -907,41 +1968,100 @@
       results.style.display  = 'block';
       renderResults(data);
       results.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+      // If user is authenticated, the backend updated their database profile. 
+      // Update local javascript cache and sidebar inputs to stay in sync.
+      const isAuthenticated = {% if user.is_authenticated %}true{% else %}false{% endif %};
+      if (isAuthenticated) {
+        currentUserProfile = profile;
+        
+        // Sync values to sidebar edit fields
+        const setVal = (id, val) => {
+          const el = document.getElementById(id);
+          if (el) el.value = val !== undefined && val !== null ? val : '';
+        };
+        setVal('profile-field', currentUserProfile.field);
+        setVal('profile-gpa', currentUserProfile.gpa || '');
+        setVal('profile-budget', currentUserProfile.budget && currentUserProfile.budget !== 999999 ? currentUserProfile.budget : '');
+        setVal('profile-interests', currentUserProfile.interests);
+        setVal('profile-career_goals', currentUserProfile.career_goals);
+        
+        // Sync preferred country chips in sidebar
+        document.querySelectorAll('#profile-country-chips .chip').forEach(chip => {
+          if (currentUserProfile.countries.includes(chip.dataset.value)) {
+            chip.classList.add('active');
+          } else {
+            chip.classList.remove('active');
+          }
+        });
+        
+        updateProfileSummary();
+      }
     } catch (err) {
       loading.style.display = 'none';
-      alert('Something went wrong. Make sure the Flask server is running.');
+      alert('Something went wrong. Please check your internet connection.');
       console.error(err);
     } finally {
       btn.disabled = false;
     }
   }
 
-  // ── Populate Profile from Backend ─────────────────────────
-  const profileJson = '{{ profile_data_json|escapejs }}';
-  if (profileJson) {
-    try {
-      const profile = JSON.parse(profileJson);
-      if (profile && Object.keys(profile).length > 0) {
-        if (profile.field) document.getElementById('field').value = profile.field;
-        if (profile.gpa) document.getElementById('gpa').value = profile.gpa;
-        if (profile.budget && profile.budget !== 999999) document.getElementById('budget').value = profile.budget;
-        if (profile.interests) document.getElementById('interests').value = profile.interests;
-        if (profile.career_goals) document.getElementById('career_goals').value = profile.career_goals;
+  // ── Populate Forms & Chips ────────────────────────────────
+  function populateFormFields() {
+    const isAuthenticated = {% if user.is_authenticated %}true{% else %}false{% endif %};
+    
+    const setVal = (id, val) => {
+      const el = document.getElementById(id);
+      if (el) el.value = val !== undefined && val !== null ? val : '';
+    };
+    
+    if (currentUserProfile) {
+      // 1. Populate main homepage inputs
+      setVal('field', currentUserProfile.field);
+      setVal('gpa', currentUserProfile.gpa || '');
+      setVal('budget', currentUserProfile.budget && currentUserProfile.budget !== 999999 ? currentUserProfile.budget : '');
+      setVal('interests', currentUserProfile.interests);
+      setVal('career_goals', currentUserProfile.career_goals);
+      
+      // Populate active chips for main page
+      if (currentUserProfile.countries && currentUserProfile.countries.length > 0) {
+        document.querySelectorAll('#country-chips .chip').forEach(chip => {
+          if (currentUserProfile.countries.includes(chip.dataset.value)) {
+            chip.classList.add('active');
+          } else {
+            chip.classList.remove('active');
+          }
+        });
+      }
+      
+      // 2. Populate sidebar profile inputs (only if authenticated)
+      if (isAuthenticated) {
+        setVal('profile-field', currentUserProfile.field);
+        setVal('profile-gpa', currentUserProfile.gpa || '');
+        setVal('profile-budget', currentUserProfile.budget && currentUserProfile.budget !== 999999 ? currentUserProfile.budget : '');
+        setVal('profile-interests', currentUserProfile.interests);
+        setVal('profile-career_goals', currentUserProfile.career_goals);
         
-        if (profile.countries && profile.countries.length > 0) {
-          const chips = document.querySelectorAll('.chip');
-          chips.forEach(chip => {
-            if (profile.countries.includes(chip.dataset.value)) {
+        // Populate active chips for sidebar
+        if (currentUserProfile.countries && currentUserProfile.countries.length > 0) {
+          document.querySelectorAll('#profile-country-chips .chip').forEach(chip => {
+            if (currentUserProfile.countries.includes(chip.dataset.value)) {
               chip.classList.add('active');
+            } else {
+              chip.classList.remove('active');
             }
           });
         }
-        console.log("Profile pre-populated successfully.");
+        
+        updateProfileSummary();
       }
-    } catch (e) {
-      console.error("Error parsing profile data:", e);
     }
   }
+
+  // ── Startup Initialization ────────────────────────────────
+  window.onload = function() {
+    populateFormFields();
+  };
 </script>
 
 </body>

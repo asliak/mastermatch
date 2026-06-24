@@ -1,0 +1,13 @@
+.git
+.venv
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+db.sqlite3
+docker_data/
+.DS_Store
+.ipynb_checkpoints/
+.gemini/
+build/
+*.log
