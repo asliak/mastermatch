@@ -404,60 +404,66 @@ class APIAppleAuthView(APIView):
 # Web social auth login endpoint (registers session for index page)
 @csrf_exempt
 def web_social_auth_view(request):
-    if request.method != "POST":
-        return JsonResponse({"error": "POST required"}, status=400)
-        
     try:
-        data = json.loads(request.body)
-    except Exception:
-        return JsonResponse({"error": "Invalid JSON"}, status=400)
+        if request.method != "POST":
+            return JsonResponse({"error": "POST required"}, status=400)
+            
+        try:
+            data = json.loads(request.body)
+        except Exception:
+            return JsonResponse({"error": "Invalid JSON"}, status=400)
+            
+        provider = data.get("provider", "")
+        token = data.get("token", "")
         
-    provider = data.get("provider", "")
-    token = data.get("token", "")
-    
-    if not provider or not token:
-        return JsonResponse({"error": "provider and token are required"}, status=400)
+        if not provider or not token:
+            return JsonResponse({"error": "provider and token are required"}, status=400)
+            
+        username = None
+        email = None
         
-    username = None
-    email = None
-    
-    if provider == "google":
-        if token.startswith("sandbox-google-"):
-            username = token.replace("sandbox-google-", "").strip()
-            email = f"{username}@gmail.com"
-        else:
-            try:
-                res = requests.get(f"https://oauth2.googleapis.com/tokeninfo?id_token={token}", timeout=10)
-                if res.status_code == 200:
-                    info = res.json()
-                    email = info.get("email")
-                    username = email.split("@")[0] if email else None
-            except Exception:
-                pass
-    elif provider == "apple":
-        if token.startswith("sandbox-apple-"):
-            username = token.replace("sandbox-apple-", "").strip()
-            email = f"{username}@apple.com"
-        else:
-            try:
-                parts = token.split(".")
-                if len(parts) == 3:
-                    payload_b64 = parts[1]
-                    payload_b64 += "=" * ((4 - len(payload_b64) % 4) % 4)
-                    import base64
-                    payload = json.loads(base64.b64decode(payload_b64).decode("utf-8"))
-                    email = payload.get("email")
-                    sub = payload.get("sub")
-                    username = email.split("@")[0] if email else f"apple_user_{sub[:8]}"
-            except Exception:
-                pass
-                
-    if not username:
-        return JsonResponse({"error": "Invalid credentials or token info"}, status=400)
-        
-    user, _ = User.objects.get_or_create(username=username, defaults={"email": email or ""})
-    login(request, user)
-    return JsonResponse({"success": True, "username": user.username})
+        if provider == "google":
+            if token.startswith("sandbox-google-"):
+                username = token.replace("sandbox-google-", "").strip()
+                email = f"{username}@gmail.com"
+            else:
+                try:
+                    res = requests.get(f"https://oauth2.googleapis.com/tokeninfo?id_token={token}", timeout=10)
+                    if res.status_code == 200:
+                        info = res.json()
+                        email = info.get("email")
+                        username = email.split("@")[0] if email else None
+                except Exception as ex:
+                    return JsonResponse({"error": f"Failed calling Google API: {str(ex)}"}, status=400)
+        elif provider == "apple":
+            if token.startswith("sandbox-apple-"):
+                username = token.replace("sandbox-apple-", "").strip()
+                email = f"{username}@apple.com"
+            else:
+                try:
+                    parts = token.split(".")
+                    if len(parts) == 3:
+                        payload_b64 = parts[1]
+                        payload_b64 += "=" * ((4 - len(payload_b64) % 4) % 4)
+                        import base64
+                        payload = json.loads(base64.b64decode(payload_b64).decode("utf-8"))
+                        email = payload.get("email")
+                        sub = payload.get("sub")
+                        username = email.split("@")[0] if email else f"apple_user_{sub[:8]}"
+                except Exception as ex:
+                    return JsonResponse({"error": f"Failed parsing Apple Token: {str(ex)}"}, status=400)
+                     
+        if not username:
+            return JsonResponse({"error": "Invalid credentials or token info"}, status=400)
+            
+        user, _ = User.objects.get_or_create(username=username, defaults={"email": email or ""})
+        login(request, user)
+        return JsonResponse({"success": True, "username": user.username})
+    except Exception as e:
+        import traceback
+        tb = traceback.format_exc()
+        return JsonResponse({"error": f"Server crash: {str(e)}", "traceback": tb}, status=500)
+
 
 
 # ── Favorites Endpoints (Web AJAX & Listing) ──────────────────────
