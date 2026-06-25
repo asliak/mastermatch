@@ -46,5 +46,6 @@ RUN python manage.py collectstatic --noinput
 # Expose port 8000
 EXPOSE 8000
 
-# Start server using gunicorn WSGI server
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "--workers", "1", "--timeout", "300", "mastermatch_django.wsgi:application"]
+# Start server using gunicorn WSGI server, dynamically binding to the port provided by Render (or fallback to 8000)
+CMD ["sh", "-c", "gunicorn --bind 0.0.0.0:${PORT:-8000} --workers 1 --timeout 300 mastermatch_django.wsgi:application"]
+
