@@ -134,3 +134,39 @@ class FavoriteTests(TestCase):
         self.assertEqual(response.data[0]['program'], self.program_name)
 
 
+class StandalonePageViewsTests(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username='test_user', password='password123')
+        
+    def test_anonymous_profile_redirects(self):
+        response = self.client.get('/profile/')
+        self.assertEqual(response.status_code, 302)
+        
+    def test_authenticated_profile_loads(self):
+        self.client.login(username='test_user', password='password123')
+        response = self.client.get('/profile/')
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'profile settings')
+
+    def test_anonymous_calendar_redirects(self):
+        response = self.client.get('/calendar/')
+        self.assertEqual(response.status_code, 302)
+
+    def test_authenticated_calendar_loads(self):
+        self.client.login(username='test_user', password='password123')
+        response = self.client.get('/calendar/')
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'deadline calendar')
+
+    def test_anonymous_notes_redirects(self):
+        response = self.client.get('/notes/')
+        self.assertEqual(response.status_code, 302)
+
+    def test_authenticated_notes_loads(self):
+        self.client.login(username='test_user', password='password123')
+        response = self.client.get('/notes/')
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'tasks & notes')
+
+
+

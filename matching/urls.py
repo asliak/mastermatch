@@ -9,8 +9,12 @@ urlpatterns = [
     path('logout/', views.logout_view, name='logout'),
     path('match', views.match_view, name='match'), # Web AJAX match endpoint
     path('profile/save', views.save_profile_view, name='save_profile'),
+    path('profile/', views.profile_page_view, name='profile_page'),
+    path('calendar/', views.calendar_page_view, name='calendar_page'),
+    path('notes/', views.notes_page_view, name='notes_page'),
     
     path('favorites/', views.favorites_list_view, name='favorites_list'),
+
     path('favorites/toggle/', views.toggle_favorite_view, name='toggle_favorite'),
     
     # REST API endpoints (Mobile Client)

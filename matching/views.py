@@ -536,6 +536,79 @@ def favorites_list_view(request):
     })
 
 
+def profile_page_view(request):
+    if not request.user.is_authenticated:
+        return redirect('login')
+        
+    profile = request.user.profile if hasattr(request.user, 'profile') else None
+    profile_data = {}
+    if profile:
+        profile_data = {
+            "field": profile.field_of_study,
+            "gpa": profile.gpa,
+            "budget": profile.budget,
+            "interests": profile.interests,
+            "career_goals": profile.career_goals,
+            "countries": profile.countries_list,
+        }
+        
+    return render(request, "profile.html", {
+        "profile": profile,
+        "profile_data_json": json.dumps(profile_data),
+    })
+
+
+def calendar_page_view(request):
+    if not request.user.is_authenticated:
+        return redirect('login')
+        
+    favs = FavoriteProgram.objects.filter(user=request.user).order_by('-created_at')
+    matcher = get_matcher()
+    programs_by_key = {(p['university_name'], p['program_name']): p for p in matcher.programs}
+    
+    favorites_data = []
+    for f in favs:
+        p = programs_by_key.get((f.university_name, f.program_name))
+        if p:
+            favorites_data.append({
+                "university": p["university_name"],
+                "program": p["program_name"],
+                "country": p["country"],
+                "city": p["city"],
+                "deadline": p["deadline_month"],
+            })
+            
+    return render(request, "calendar.html", {
+        "favorites_data_json": json.dumps(favorites_data),
+    })
+
+
+def notes_page_view(request):
+    if not request.user.is_authenticated:
+        return redirect('login')
+        
+    favs = FavoriteProgram.objects.filter(user=request.user).order_by('-created_at')
+    matcher = get_matcher()
+    programs_by_key = {(p['university_name'], p['program_name']): p for p in matcher.programs}
+    
+    favorites_data = []
+    for f in favs:
+        p = programs_by_key.get((f.university_name, f.program_name))
+        if p:
+            favorites_data.append({
+                "university": p["university_name"],
+                "program": p["program_name"],
+                "country": p["country"],
+                "city": p["city"],
+                "deadline": p["deadline_month"],
+            })
+            
+    return render(request, "notes.html", {
+        "favorites": favorites_data,
+    })
+
+
+
 # ── REST API Favorites Endpoint (Mobile Client) ───────────────────
 class APIFavoritesView(APIView):
     permission_classes = [permissions.IsAuthenticated]

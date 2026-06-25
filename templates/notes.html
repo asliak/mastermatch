@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MasterMatch — Tasks & Notes</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:        #faf9f6;
+      --white:     #ffffff;
+      --ink:       #1a1a1a;
+      --muted:     #7a7a7a;
+      --border:    #d8d4cc;
+
+      --mint:      #b8e8d4;
+      --mint-soft: #dff4ec;
+      --pink:      #f9c8d4;
+      --pink-soft: #fde8ed;
+      --sky:       #b8d8f0;
+      --sky-soft:  #deeef9;
+      --yellow:    #f9e8a0;
+      --peach:     #fdd5b0;
+
+      --radius-sm: 8px;
+      --radius:    16px;
+      --radius-lg: 24px;
+      --radius-pill: 100px;
+
+      --font-display: 'Playfair Display', serif;
+      --font-body:    'DM Sans', sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--font-body);
+      font-weight: 300;
+      min-height: 100vh;
+      background-image:
+        linear-gradient(rgba(0,0,0,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,0,0,0.04) 1px, transparent 1px);
+      background-size: 32px 32px;
+    }
+
+    /* ── HEADER ─────────────────────────────────────────────── */
+    header {
+      background: var(--white);
+      border-bottom: 1.5px solid var(--ink);
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .logo {
+      font-family: var(--font-display);
+      font-weight: 900;
+      font-size: 1.5rem;
+      letter-spacing: -0.03em;
+    }
+    .logo span {
+      background: var(--mint);
+      padding: 0 6px;
+      border-radius: 4px;
+    }
+    .logo-link {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .nav-tag {
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      border: 1.5px solid var(--border);
+      padding: 0.35rem 1rem;
+      border-radius: var(--radius-pill);
+    }
+
+    /* ── HERO ────────────────────────────────────────────────── */
+    .hero {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 4rem 2rem 1.5rem;
+      text-align: center;
+      position: relative;
+    }
+
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      border: 1.5px solid var(--border);
+      background: var(--white);
+      padding: 0.4rem 1.1rem;
+      border-radius: var(--radius-pill);
+      margin-bottom: 1.8rem;
+    }
+    .hero-eyebrow::before { content: '✦'; color: var(--ink); font-size: 0.6rem; }
+
+    h1 {
+      font-family: var(--font-display);
+      font-size: clamp(2.5rem, 6vw, 4.5rem);
+      font-weight: 900;
+      line-height: 1.1;
+      letter-spacing: -0.03em;
+      margin-bottom: 1rem;
+    }
+
+    .hl-pink { background: var(--pink); padding: 0 10px 4px; border-radius: 6px; font-style: normal; }
+
+    /* ── MAIN LAYOUT ─────────────────────────────────────────── */
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 1.5rem 1.5rem 5rem;
+    }
+
+    /* ── NOTE CARD ───────────────────────────────────────────── */
+    .note-card {
+      background: var(--white);
+      border: 1.5px solid var(--ink);
+      border-radius: var(--radius-lg);
+      padding: 1.6rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 4px 4px 0 var(--ink);
+      position: relative;
+      padding-left: 1.8rem;
+    }
+    .note-card::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 16px; bottom: 16px;
+      width: 4px;
+      border-radius: 4px;
+      background: var(--pink);
+    }
+    .note-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      margin-bottom: 1rem;
+      gap: 1rem;
+    }
+    .note-uni {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 0.15rem;
+    }
+    .note-prog {
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+    .deadline-badge {
+      background: var(--yellow);
+      border: 1.5px solid var(--ink);
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      padding: 0.22rem 0.7rem;
+      border-radius: var(--radius-pill);
+      flex-shrink: 0;
+    }
+
+    .note-textarea-wrap {
+      margin: 0.8rem 0;
+    }
+    .note-textarea {
+      width: 100%;
+      min-height: 120px;
+      background: var(--bg);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--ink);
+      font-family: var(--font-body);
+      font-size: 0.92rem;
+      padding: 0.8rem 1rem;
+      outline: none;
+      resize: vertical;
+      transition: border-color 0.2s, box-shadow 0.15s;
+    }
+    .note-textarea:focus {
+      border-color: var(--ink);
+      box-shadow: 3px 3px 0 var(--ink);
+      background: var(--white);
+    }
+
+    .note-status-wrap {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+    .note-status-success {
+      color: #2e7d32;
+    }
+
+    /* ── EMPTY STATE ─────────────────────────────────────────── */
+    .guest-card {
+      background: var(--white);
+      border: 1.5px solid var(--ink);
+      border-radius: var(--radius-lg);
+      padding: 3rem;
+      text-align: center;
+      box-shadow: 5px 5px 0 var(--ink);
+      max-width: 500px;
+      margin: 2rem auto;
+    }
+    .guest-icon {
+      background: var(--pink-soft);
+      border: 1.5px solid var(--ink);
+      display: inline-flex;
+      padding: 1rem;
+      border-radius: 50%;
+      margin-bottom: 1.5rem;
+      font-size: 2.2rem;
+      box-shadow: 2px 2px 0 var(--ink);
+    }
+    .btn-home {
+      display: inline-block;
+      margin-top: 1.5rem;
+      padding: 0.75rem 1.5rem;
+      background: var(--ink);
+      border: 1.5px solid var(--ink);
+      border-radius: var(--radius-pill);
+      color: var(--white);
+      font-family: var(--font-body);
+      font-size: 0.9rem;
+      font-weight: 500;
+      text-decoration: none;
+      transition: transform 0.15s, box-shadow 0.15s;
+      box-shadow: 3px 3px 0 var(--mint);
+    }
+    .btn-home:hover { transform: translate(-2px, -2px); box-shadow: 5px 5px 0 var(--mint); }
+    .btn-home:active { transform: translate(0,0); box-shadow: 1px 1px 0 var(--mint); }
+
+    /* ── AUTH BUTTONS ────────────────────────────────────────── */
+    .nav-btn {
+      transition: transform 0.1s, box-shadow 0.1s, background-color 0.15s;
+    }
+    .nav-btn:hover { transform: translate(-1.5px, -1.5px); }
+    .nav-btn:active { transform: translate(0, 0); }
+    .btn-secondary:hover { box-shadow: 3.5px 3.5px 0 var(--ink) !important; }
+    .btn-secondary:active { box-shadow: 1px 1px 0 var(--ink) !important; }
+
+    .note-spinner {
+      width: 12px;
+      height: 12px;
+      border: 2px solid rgba(0,0,0,0.1);
+      border-top-color: var(--ink);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── RESPONSIVE ──────────────────────────────────────────── */
+    @media (max-width: 600px) {
+      header { padding: 1rem; }
+      .note-header { flex-direction: column; align-items: start; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── HEADER ──────────────────────────────────────────────── -->
+<header>
+  <div class="logo"><a href="/" class="logo-link">master<span>match</span>.</a></div>
+  <div class="nav-right" style="display: flex; align-items: center; gap: 0.8rem; flex-wrap: wrap;">
+    <span class="user-welcome" style="font-size: 0.82rem; font-weight: 500; color: var(--ink); margin-right: 0.5rem;">
+      Hi, <strong>{{ user.username }}</strong>!
+    </span>
+    <a href="/" class="nav-btn btn-secondary" style="font-size: 0.78rem; font-weight: 500; text-decoration: none; color: var(--ink); border: 1.5px solid var(--ink); padding: 0.35rem 1rem; border-radius: var(--radius-pill); background: var(--white); box-shadow: 2px 2px 0 var(--ink); display: inline-block;">Search Dashboard</a>
+    <a href="/profile/" class="nav-btn btn-secondary" style="font-size: 0.78rem; font-weight: 500; text-decoration: none; color: var(--ink); border: 1.5px solid var(--ink); padding: 0.35rem 1rem; border-radius: var(--radius-pill); background: var(--mint); box-shadow: 2px 2px 0 var(--ink); display: inline-block;">My Profile</a>
+    <a href="/favorites/" class="nav-btn btn-secondary" style="font-size: 0.78rem; font-weight: 500; text-decoration: none; color: var(--ink); border: 1.5px solid var(--ink); padding: 0.35rem 1rem; border-radius: var(--radius-pill); background: var(--sky); box-shadow: 2px 2px 0 var(--ink); display: inline-block;">Favorites</a>
+    <a href="/calendar/" class="nav-btn btn-secondary" style="font-size: 0.78rem; font-weight: 500; text-decoration: none; color: var(--ink); border: 1.5px solid var(--ink); padding: 0.35rem 1rem; border-radius: var(--radius-pill); background: var(--yellow); box-shadow: 2px 2px 0 var(--ink); display: inline-block;">Deadline Calendar</a>
+    <a href="/notes/" class="nav-btn btn-secondary" style="font-size: 0.78rem; font-weight: 700; text-decoration: none; color: var(--ink); border: 1.5px solid var(--ink); padding: 0.35rem 1rem; border-radius: var(--radius-pill); background: var(--pink); transform: translate(1px, 1px); box-shadow: 1px 1px 0 var(--ink); display: inline-block;">Tasks & Notes</a>
+    <a href="/logout/" class="nav-btn btn-secondary" style="font-size: 0.78rem; font-weight: 500; text-decoration: none; color: var(--ink); border: 1.5px solid var(--ink); padding: 0.35rem 1rem; border-radius: var(--radius-pill); background: var(--white); box-shadow: 2px 2px 0 var(--ink); display: inline-block;">Logout</a>
+    <div class="nav-tag" style="margin-left: 0.5rem;">EE 471 · Final Project</div>
+  </div>
+</header>
+
+<!-- ── HERO ────────────────────────────────────────────────── -->
+<div class="hero">
+  <div class="hero-eyebrow">Task Management</div>
+  <h1>
+    my <span class="hl-pink">tasks & notes.</span>
+  </h1>
+</div>
+
+<!-- ── CONTAINER ────────────────────────────────────────────── -->
+<div class="container">
+
+  <!-- Empty state -->
+  {% if not favorites %}
+    <div class="guest-card">
+      <div class="guest-icon">☆</div>
+      <h3 style="font-family: var(--font-display); font-size: 1.6rem; font-weight: 700; margin-bottom: 0.8rem;">No Favorites Saved</h3>
+      <p style="font-size: 0.95rem; color: var(--muted); line-height: 1.6;">
+        Favorite programs first from the search results to start adding custom notes for them!
+      </p>
+      <a href="/" class="btn-home">Find Programs →</a>
+    </div>
+  {% else %}
+    <!-- Notes list -->
+    <div id="notes-list-container">
+      {% for f in favorites %}
+        {% with storage_key="note_"|add:user.username|add:"_"|add:f.university|add:"_"|add:f.program %}
+          <div class="note-card">
+            <div class="note-header">
+              <div>
+                <div class="note-uni">{{ f.university }}</div>
+                <div class="note-prog">{{ f.program }} · {{ f.city }}, {{ f.country }}</div>
+              </div>
+              <div class="deadline-badge">
+                Deadline: {{ f.deadline }}
+              </div>
+            </div>
+            <div style="font-size: 0.72rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.4rem;">
+              MY TASKS & NOTES
+            </div>
+            <div class="note-textarea-wrap">
+              <textarea class="note-textarea" 
+                        placeholder="e.g. Talk to Prof. X about letters of rec, prepare draft statement of purpose…" 
+                        data-key="{{ storage_key|slugify }}"
+                        oninput="handleNoteInput(this)"></textarea>
+            </div>
+            <div class="note-status-wrap" id="status-{{ storage_key|slugify }}">
+              Saved
+            </div>
+          </div>
+        {% endwith %}
+      {% endfor %}
+    </div>
+  {% endif %}
+
+</div>
+
+<script>
+  let noteDebounces = {};
+  const username = "{{ user.username }}";
+
+  // Debounced auto-save to localStorage
+  function handleNoteInput(textarea) {
+    const key = textarea.dataset.key;
+    const statusDiv = document.getElementById(`status-${key}`);
+    if (!statusDiv) return;
+    
+    statusDiv.className = 'note-status-wrap';
+    statusDiv.textContent = 'Typing…';
+    
+    if (noteDebounces[key]) clearTimeout(noteDebounces[key]);
+    
+    noteDebounces[key] = setTimeout(() => {
+      statusDiv.innerHTML = '<span class="note-spinner" style="display:inline-block; vertical-align:middle;"></span> Saving...';
+      
+      localStorage.setItem(key, textarea.value);
+      
+      setTimeout(() => {
+        statusDiv.className = 'note-status-wrap note-status-success';
+        statusDiv.textContent = 'Auto-saved ✓';
+      }, 300);
+    }, 700);
+  }
+
+  // Load saved notes from localStorage on page load
+  window.onload = function() {
+    document.querySelectorAll('.note-textarea').forEach(textarea => {
+      const key = textarea.dataset.key;
+      const savedNote = localStorage.getItem(key) || '';
+      textarea.value = savedNote;
+    });
+  };
+</script>
+
+</body>
+</html>

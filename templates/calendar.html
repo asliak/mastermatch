@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MasterMatch — Deadline Calendar</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:        #faf9f6;
+      --white:     #ffffff;
+      --ink:       #1a1a1a;
+      --muted:     #7a7a7a;
+      --border:    #d8d4cc;
+
+      --mint:      #b8e8d4;
+      --mint-soft: #dff4ec;
+      --pink:      #f9c8d4;
+      --pink-soft: #fde8ed;
+      --sky:       #b8d8f0;
+      --sky-soft:  #deeef9;
+      --yellow:    #f9e8a0;
+      --peach:     #fdd5b0;
+
+      --radius-sm: 8px;
+      --radius:    16px;
+      --radius-lg: 24px;
+      --radius-pill: 100px;
+
+      --font-display: 'Playfair Display', serif;
+      --font-body:    'DM Sans', sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--font-body);
+      font-weight: 300;
+      min-height: 100vh;
+      background-image:
+        linear-gradient(rgba(0,0,0,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,0,0,0.04) 1px, transparent 1px);
+      background-size: 32px 32px;
+    }
+
+    /* ── HEADER ─────────────────────────────────────────────── */
+    header {
+      background: var(--white);
+      border-bottom: 1.5px solid var(--ink);
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .logo {
+      font-family: var(--font-display);
+      font-weight: 900;
+      font-size: 1.5rem;
+      letter-spacing: -0.03em;
+    }
+    .logo span {
+      background: var(--mint);
+      padding: 0 6px;
+      border-radius: 4px;
+    }
+    .logo-link {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .nav-tag {
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      border: 1.5px solid var(--border);
+      padding: 0.35rem 1rem;
+      border-radius: var(--radius-pill);
+    }
+
+    /* ── HERO ────────────────────────────────────────────────── */
+    .hero {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 4rem 2rem 1.5rem;
+      text-align: center;
+      position: relative;
+    }
+
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      border: 1.5px solid var(--border);
+      background: var(--white);
+      padding: 0.4rem 1.1rem;
+      border-radius: var(--radius-pill);
+      margin-bottom: 1.8rem;
+    }
+    .hero-eyebrow::before { content: '✦'; color: var(--ink); font-size: 0.6rem; }
+
+    h1 {
+      font-family: var(--font-display);
+      font-size: clamp(2.5rem, 6vw, 4.5rem);
+      font-weight: 900;
+      line-height: 1.1;
+      letter-spacing: -0.03em;
+      margin-bottom: 1rem;
+    }
+
+    .hl-yellow { background: var(--yellow); padding: 0 10px 4px; border-radius: 6px; font-style: normal; }
+
+    /* ── MAIN LAYOUT ─────────────────────────────────────────── */
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 1.5rem 1.5rem 5rem;
+      display: grid;
+      grid-template-columns: 1.20fr 0.80fr;
+      gap: 2rem;
+      align-items: start;
+    }
+
+    /* ── CALENDAR BOX ────────────────────────────────────────── */
+    .calendar-box {
+      background: var(--white);
+      border: 1.5px solid var(--ink);
+      border-radius: var(--radius-lg);
+      padding: 2rem;
+      box-shadow: 5px 5px 0px var(--ink);
+    }
+    .calendar-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+    }
+    .calendar-title {
+      font-family: var(--font-display);
+      font-size: 1.35rem;
+      font-weight: 900;
+    }
+    .calendar-nav-btn {
+      background: var(--white);
+      border: 1.5px solid var(--ink);
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 1.2rem;
+      box-shadow: 2px 2px 0 var(--ink);
+      transition: transform 0.1s, box-shadow 0.1s;
+      user-select: none;
+    }
+    .calendar-nav-btn:hover {
+      transform: translate(-1px, -1px);
+      box-shadow: 3px 3px 0 var(--ink);
+    }
+    .calendar-nav-btn:active {
+      transform: translate(0, 0);
+      box-shadow: 1px 1px 0 var(--ink);
+    }
+
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 0.5rem;
+    }
+    .weekday-lbl {
+      text-align: center;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--muted);
+      padding: 0.5rem 0;
+    }
+    .calendar-day-cell {
+      aspect-ratio: 1.2;
+      background: var(--bg);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      font-weight: 500;
+      position: relative;
+      transition: all 0.15s;
+    }
+    .calendar-day-cell:hover:not(.empty) {
+      border-color: var(--ink);
+      background: var(--white);
+      transform: scale(1.03);
+    }
+    .calendar-day-cell.empty {
+      background: transparent;
+      border-color: transparent;
+    }
+    .calendar-day-cell.has-deadline {
+      background: var(--sky-soft);
+      border-color: var(--ink);
+      box-shadow: 2.5px 2.5px 0 var(--ink);
+      font-weight: 700;
+      color: var(--ink);
+      cursor: pointer;
+    }
+    .calendar-day-cell.has-deadline::after {
+      content: '';
+      position: absolute;
+      bottom: 4px;
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: var(--pink);
+      border: 1px solid var(--ink);
+    }
+
+    /* ── DEADLINES SECTION ───────────────────────────────────── */
+    .deadlines-box {
+      background: var(--white);
+      border: 1.5px solid var(--ink);
+      border-radius: var(--radius-lg);
+      padding: 2rem;
+      box-shadow: 5px 5px 0 var(--ink);
+    }
+    .deadlines-header {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1.5px dashed var(--border);
+    }
+
+    .deadline-card {
+      background: var(--bg);
+      border: 1.5px solid var(--ink);
+      border-radius: var(--radius);
+      padding: 1.1rem;
+      margin-bottom: 0.8rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      box-shadow: 2.5px 2.5px 0 var(--ink);
+      transition: transform 0.1s, box-shadow 0.1s;
+    }
+    .deadline-card:hover {
+      transform: translate(-1px, -1px);
+      box-shadow: 3.5px 3.5px 0 var(--ink);
+    }
+    .deadline-info {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+    }
+    .deadline-icon {
+      background: var(--sky-soft);
+      border: 1.5px solid var(--ink);
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      flex-shrink: 0;
+    }
+    .deadline-uni {
+      font-size: 0.88rem;
+      font-weight: 700;
+      margin-bottom: 0.15rem;
+    }
+    .deadline-prog {
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+    .deadline-badge {
+      background: var(--pink);
+      border: 1.5px solid var(--ink);
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      padding: 0.2rem 0.6rem;
+      border-radius: var(--radius-pill);
+      flex-shrink: 0;
+    }
+
+    .no-deadlines-card {
+      text-align: center;
+      padding: 2rem;
+      color: var(--muted);
+      font-size: 0.88rem;
+      border: 1.5px dashed var(--border);
+      border-radius: var(--radius);
+    }
+
+    /* ── AUTH BUTTONS ────────────────────────────────────────── */
+    .nav-btn {
+      transition: transform 0.1s, box-shadow 0.1s, background-color 0.15s;
+    }
+    .nav-btn:hover { transform: translate(-1.5px, -1.5px); }
+    .nav-btn:active { transform: translate(0, 0); }
+    .btn-secondary:hover { box-shadow: 3.5px 3.5px 0 var(--ink) !important; }
+    .btn-secondary:active { box-shadow: 1px 1px 0 var(--ink) !important; }
+
+    /* ── RESPONSIVE ──────────────────────────────────────────── */
+    @media (max-width: 800px) {
+      .container { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 600px) {
+      header { padding: 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── HEADER ──────────────────────────────────────────────── -->
+<header>
+  <div class="logo"><a href="/" class="logo-link">master<span>match</span>.</a></div>
+  <div class="nav-right" style="display: flex; align-items: center; gap: 0.8rem; flex-wrap: wrap;">
+    <span class="user-welcome" style="font-size: 0.82rem; font-weight: 500; color: var(--ink); margin-right: 0.5rem;">
+      Hi, <strong>{{ user.username }}</strong>!
+    </span>
+    <a href="/" class="nav-btn btn-secondary" style="font-size: 0.78rem; font-weight: 500; text-decoration: none; color: var(--ink); border: 1.5px solid var(--ink); padding: 0.35rem 1rem; border-radius: var(--radius-pill); background: var(--white); box-shadow: 2px 2px 0 var(--ink); display: inline-block;">Search Dashboard</a>
+    <a href="/profile/" class="nav-btn btn-secondary" style="font-size: 0.78rem; font-weight: 500; text-decoration: none; color: var(--ink); border: 1.5px solid var(--ink); padding: 0.35rem 1rem; border-radius: var(--radius-pill); background: var(--mint); box-shadow: 2px 2px 0 var(--ink); display: inline-block;">My Profile</a>
+    <a href="/favorites/" class="nav-btn btn-secondary" style="font-size: 0.78rem; font-weight: 500; text-decoration: none; color: var(--ink); border: 1.5px solid var(--ink); padding: 0.35rem 1rem; border-radius: var(--radius-pill); background: var(--sky); box-shadow: 2px 2px 0 var(--ink); display: inline-block;">Favorites</a>
+    <a href="/calendar/" class="nav-btn btn-secondary" style="font-size: 0.78rem; font-weight: 700; text-decoration: none; color: var(--ink); border: 1.5px solid var(--ink); padding: 0.35rem 1rem; border-radius: var(--radius-pill); background: var(--yellow); transform: translate(1px, 1px); box-shadow: 1px 1px 0 var(--ink); display: inline-block;">Deadline Calendar</a>
+    <a href="/notes/" class="nav-btn btn-secondary" style="font-size: 0.78rem; font-weight: 500; text-decoration: none; color: var(--ink); border: 1.5px solid var(--ink); padding: 0.35rem 1rem; border-radius: var(--radius-pill); background: var(--pink); box-shadow: 2px 2px 0 var(--ink); display: inline-block;">Tasks & Notes</a>
+    <a href="/logout/" class="nav-btn btn-secondary" style="font-size: 0.78rem; font-weight: 500; text-decoration: none; color: var(--ink); border: 1.5px solid var(--ink); padding: 0.35rem 1rem; border-radius: var(--radius-pill); background: var(--white); box-shadow: 2px 2px 0 var(--ink); display: inline-block;">Logout</a>
+    <div class="nav-tag" style="margin-left: 0.5rem;">EE 471 · Final Project</div>
+  </div>
+</header>
+
+<!-- ── HERO ────────────────────────────────────────────────── -->
+<div class="hero">
+  <div class="hero-eyebrow">Target Timelines</div>
+  <h1>
+    my <span class="hl-yellow">deadline calendar.</span>
+  </h1>
+</div>
+
+<!-- ── CONTAINER ────────────────────────────────────────────── -->
+<div class="container">
+
+  <!-- Left: Calendar Widget -->
+  <div class="calendar-box">
+    <div class="calendar-header">
+      <div class="calendar-nav-btn" onclick="changeMonth(-1)">‹</div>
+      <div class="calendar-title" id="calendar-month-title">January 2026</div>
+      <div class="calendar-nav-btn" onclick="changeMonth(1)">›</div>
+    </div>
+    
+    <div class="calendar-grid" id="calendar-weekdays-grid">
+      <div class="weekday-lbl">Sun</div>
+      <div class="weekday-lbl">Mon</div>
+      <div class="weekday-lbl">Tue</div>
+      <div class="weekday-lbl">Wed</div>
+      <div class="weekday-lbl">Thu</div>
+      <div class="weekday-lbl">Fri</div>
+      <div class="weekday-lbl">Sat</div>
+    </div>
+    <div class="calendar-grid" id="calendar-days-grid">
+      <!-- Populated by JavaScript -->
+    </div>
+  </div>
+
+  <!-- Right: Deadlines due this month -->
+  <div class="deadlines-box">
+    <div class="deadlines-header" id="deadlines-month-header">DEADLINES FOR JANUARY</div>
+    <div id="deadlines-list">
+      <!-- Populated by JavaScript -->
+    </div>
+  </div>
+
+</div>
+
+<script>
+  let userFavorites = [];
+
+  // Parse Backend Favorites Data
+  const favoritesJson = '{{ favorites_data_json|escapejs }}';
+  if (favoritesJson) {
+    try {
+      userFavorites = JSON.parse(favoritesJson);
+    } catch (e) {
+      console.error("Error parsing favorites data:", e);
+    }
+  }
+
+  const monthsList = [
+    'January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December'
+  ];
+  let calMonth = new Date().getMonth(); // 0-11
+  let calYear = new Date().getFullYear();
+
+  function changeMonth(dir) {
+    calMonth += dir;
+    if (calMonth < 0) {
+      calMonth = 11;
+      calYear--;
+    } else if (calMonth > 11) {
+      calMonth = 0;
+      calYear++;
+    }
+    renderCalendar();
+  }
+
+  function renderCalendar() {
+    // Update header texts
+    document.getElementById('calendar-month-title').textContent = `${monthsList[calMonth]} ${calYear}`;
+    document.getElementById('deadlines-month-header').textContent = `DEADLINES FOR ${monthsList[calMonth].toUpperCase()}`;
+    
+    // Filter favorites by month
+    const targetMonthName = monthsList[calMonth].toLowerCase();
+    const monthlyFavorites = userFavorites.filter(f => {
+      return f.deadline && f.deadline.trim().toLowerCase() === targetMonthName;
+    });
+    
+    // Generate Calendar Grid
+    const daysGrid = document.getElementById('calendar-days-grid');
+    if (!daysGrid) return;
+    daysGrid.innerHTML = '';
+    
+    const firstDay = new Date(calYear, calMonth, 1);
+    const startWeekday = firstDay.getDay(); // Sun = 0
+    const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+    
+    // Prefill empty cells for weekday offset
+    for (let i = 0; i < startWeekday; i++) {
+      const emptyCell = document.createElement('div');
+      emptyCell.className = 'calendar-day-cell empty';
+      daysGrid.appendChild(emptyCell);
+    }
+    
+    // Render Days of the Month
+    for (let day = 1; day <= daysInMonth; day++) {
+      const dayCell = document.createElement('div');
+      dayCell.className = 'calendar-day-cell';
+      dayCell.textContent = day;
+      
+      // Highlight the 15th if we have any deadlines this month
+      if (day === 15 && monthlyFavorites.length > 0) {
+        dayCell.classList.add('has-deadline');
+        dayCell.title = `${monthlyFavorites.length} deadline(s) due`;
+      }
+      daysGrid.appendChild(dayCell);
+    }
+    
+    // Render Deadlines list
+    const deadlinesList = document.getElementById('deadlines-list');
+    if (!deadlinesList) return;
+    deadlinesList.innerHTML = '';
+    
+    if (monthlyFavorites.length === 0) {
+      deadlinesList.innerHTML = `
+        <div class="no-deadlines-card">
+          No deadlines in this month.
+        </div>`;
+    } else {
+      monthlyFavorites.forEach(f => {
+        const card = document.createElement('div');
+        card.className = 'deadline-card';
+        card.innerHTML = `
+          <div class="deadline-info">
+            <div class="deadline-icon">🎓</div>
+            <div>
+              <div class="deadline-uni">${f.university}</div>
+              <div class="deadline-prog">${f.program} · ${f.city}, ${f.country}</div>
+            </div>
+          </div>
+          <div class="deadline-badge">
+            ${monthsList[calMonth].substring(0, 3)} 15
+          </div>`;
+        deadlinesList.appendChild(card);
+      });
+    }
+  }
+
+  window.onload = function() {
+    renderCalendar();
+  };
+</script>
+
+</body>
+</html>

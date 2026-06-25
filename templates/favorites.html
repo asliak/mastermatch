@@ -317,15 +317,20 @@
 <!-- ── HEADER ──────────────────────────────────────────────── -->
 <header>
   <div class="logo"><a href="/" class="logo-link">master<span>match</span>.</a></div>
-  <div class="nav-right" style="display: flex; align-items: center; gap: 1rem;">
-    <span class="user-welcome" style="font-size: 0.82rem; font-weight: 500; color: var(--ink);">
+  <div class="nav-right" style="display: flex; align-items: center; gap: 0.8rem; flex-wrap: wrap;">
+    <span class="user-welcome" style="font-size: 0.82rem; font-weight: 500; color: var(--ink); margin-right: 0.5rem;">
       Hi, <strong>{{ user.username }}</strong>!
     </span>
-    <a href="/" class="nav-btn btn-secondary" style="font-size: 0.78rem; font-weight: 500; text-decoration: none; color: var(--ink); border: 1.5px solid var(--ink); padding: 0.35rem 1rem; border-radius: var(--radius-pill); background: var(--mint); box-shadow: 2px 2px 0 var(--ink); display: inline-block;">Home Dashboard</a>
-    <a href="/logout/" class="nav-btn btn-secondary" style="font-size: 0.78rem; font-weight: 500; text-decoration: none; color: var(--ink); border: 1.5px solid var(--ink); padding: 0.35rem 1rem; border-radius: var(--radius-pill); background: var(--pink); box-shadow: 2px 2px 0 var(--ink); display: inline-block;">Logout</a>
+    <a href="/" class="nav-btn btn-secondary" style="font-size: 0.78rem; font-weight: 500; text-decoration: none; color: var(--ink); border: 1.5px solid var(--ink); padding: 0.35rem 1rem; border-radius: var(--radius-pill); background: var(--white); box-shadow: 2px 2px 0 var(--ink); display: inline-block;">Search Dashboard</a>
+    <a href="/profile/" class="nav-btn btn-secondary" style="font-size: 0.78rem; font-weight: 500; text-decoration: none; color: var(--ink); border: 1.5px solid var(--ink); padding: 0.35rem 1rem; border-radius: var(--radius-pill); background: var(--mint); box-shadow: 2px 2px 0 var(--ink); display: inline-block;">My Profile</a>
+    <a href="/favorites/" class="nav-btn btn-secondary" style="font-size: 0.78rem; font-weight: 700; text-decoration: none; color: var(--ink); border: 1.5px solid var(--ink); padding: 0.35rem 1rem; border-radius: var(--radius-pill); background: var(--sky); transform: translate(1px, 1px); box-shadow: 1px 1px 0 var(--ink); display: inline-block;">Favorites</a>
+    <a href="/calendar/" class="nav-btn btn-secondary" style="font-size: 0.78rem; font-weight: 500; text-decoration: none; color: var(--ink); border: 1.5px solid var(--ink); padding: 0.35rem 1rem; border-radius: var(--radius-pill); background: var(--yellow); box-shadow: 2px 2px 0 var(--ink); display: inline-block;">Deadline Calendar</a>
+    <a href="/notes/" class="nav-btn btn-secondary" style="font-size: 0.78rem; font-weight: 500; text-decoration: none; color: var(--ink); border: 1.5px solid var(--ink); padding: 0.35rem 1rem; border-radius: var(--radius-pill); background: var(--pink); box-shadow: 2px 2px 0 var(--ink); display: inline-block;">Tasks & Notes</a>
+    <a href="/logout/" class="nav-btn btn-secondary" style="font-size: 0.78rem; font-weight: 500; text-decoration: none; color: var(--ink); border: 1.5px solid var(--ink); padding: 0.35rem 1rem; border-radius: var(--radius-pill); background: var(--white); box-shadow: 2px 2px 0 var(--ink); display: inline-block;">Logout</a>
     <div class="nav-tag" style="margin-left: 0.5rem;">EE 471 · Final Project</div>
   </div>
 </header>
+
 
 <!-- ── HERO ────────────────────────────────────────────────── -->
 <div class="hero">
