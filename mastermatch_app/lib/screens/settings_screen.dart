@@ -24,7 +24,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   Future<void> _loadUrl() async {
     final prefs = await SharedPreferences.getInstance();
-    _urlCtrl.text = prefs.getString('server_url') ?? 'http://192.168.1.4:5001';
+    _urlCtrl.text = prefs.getString('server_url') ?? 'https://mastermatch.onrender.com';
   }
 
   Future<void> _testConnection() async {
@@ -130,7 +130,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         TextFormField(
                           controller: _urlCtrl,
                           decoration: const InputDecoration(
-                            hintText: 'http://192.168.1.4:5001',
+                            hintText: 'https://mastermatch.onrender.com',
                           ),
                           style: GoogleFonts.dmSans(
                             fontSize: 14,
@@ -141,7 +141,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         const SizedBox(height: 10),
                         // Help text
                         Text(
-                          'Enter your Mac\'s IP address and port, e.g. http://192.168.1.4:5001',
+                          'Enter your Mac\'s IP address and port, e.g. https://mastermatch.onrender.com',
                           style: GoogleFonts.dmSans(
                             fontSize: 12,
                             color: AppColors.muted,

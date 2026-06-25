@@ -41,7 +41,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
     try {
       final prefs = await SharedPreferences.getInstance();
-      final serverUrl = prefs.getString('server_url') ?? 'http://192.168.1.4:5001';
+      final serverUrl = prefs.getString('server_url') ?? 'https://mastermatch.onrender.com';
       final api = ApiService(baseUrl: serverUrl);
 
       final token = await api.register(

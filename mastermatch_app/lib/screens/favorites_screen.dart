@@ -44,7 +44,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
 
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('auth_token');
-    final url = prefs.getString('server_url') ?? 'http://192.168.1.4:5001';
+    final url = prefs.getString('server_url') ?? 'https://mastermatch.onrender.com';
 
     setState(() {
       _authToken = token;

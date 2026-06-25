@@ -30,7 +30,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   // App state
   bool _isLoading = false;
   List<Program>? _results;
-  String _serverUrl = 'http://192.168.1.4:5001';
+  String _serverUrl = 'https://mastermatch.onrender.com';
   String? _authToken;
   String? _username;
 
@@ -113,7 +113,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
   Future<void> _loadSettingsAndAuth() async {
     final prefs = await SharedPreferences.getInstance();
-    final url = prefs.getString('server_url') ?? 'http://192.168.1.4:5001';
+    final url = prefs.getString('server_url') ?? 'https://mastermatch.onrender.com';
     final token = prefs.getString('auth_token');
     final user = prefs.getString('username');
     
