@@ -368,14 +368,24 @@
         })
       });
 
-      const result = await response.json();
+      const responseText = await response.text();
+      let result;
+      try {
+        result = JSON.parse(responseText);
+      } catch (jsonErr) {
+        console.error("Non-JSON response received:", responseText);
+        alert("Server returned an error (" + response.status + "): " + responseText.substring(0, 300));
+        return;
+      }
+
       if (response.ok && result.success) {
         window.location.href = '/';
       } else {
         alert(result.error || 'Authentication failed.');
       }
     } catch (e) {
-      alert('Unable to connect to the server. Please try again.');
+      console.error("Error during social authentication:", e);
+      alert('Unable to connect to the server: ' + e.message);
     }
   }
 
