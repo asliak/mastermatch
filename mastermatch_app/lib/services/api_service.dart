@@ -75,7 +75,7 @@ class ApiService {
       uri,
       headers: {HttpHeaders.contentTypeHeader: 'application/json'},
       body: jsonEncode({'username': username, 'password': password}),
-    );
+    ).timeout(const Duration(seconds: 15));
 
     if (response.statusCode != 200) {
       final data = jsonDecode(response.body);
@@ -92,7 +92,7 @@ class ApiService {
       uri,
       headers: {HttpHeaders.contentTypeHeader: 'application/json'},
       body: jsonEncode({'username': username, 'email': email, 'password': password}),
-    );
+    ).timeout(const Duration(seconds: 15));
 
     if (response.statusCode != 201) {
       final data = jsonDecode(response.body);
@@ -109,7 +109,7 @@ class ApiService {
       uri,
       headers: {HttpHeaders.contentTypeHeader: 'application/json'},
       body: jsonEncode({'id_token': idToken}),
-    );
+    ).timeout(const Duration(seconds: 15));
 
     if (response.statusCode != 200) {
       final data = jsonDecode(response.body);
@@ -126,7 +126,7 @@ class ApiService {
       uri,
       headers: {HttpHeaders.contentTypeHeader: 'application/json'},
       body: jsonEncode({'identity_token': identityToken}),
-    );
+    ).timeout(const Duration(seconds: 15));
 
     if (response.statusCode != 200) {
       final data = jsonDecode(response.body);
@@ -145,7 +145,7 @@ class ApiService {
         HttpHeaders.contentTypeHeader: 'application/json',
         HttpHeaders.authorizationHeader: 'Token $token',
       },
-    );
+    ).timeout(const Duration(seconds: 15));
 
     if (response.statusCode != 200) {
       throw Exception('Failed to load profile from server');
@@ -164,7 +164,7 @@ class ApiService {
         HttpHeaders.authorizationHeader: 'Token $token',
       },
       body: jsonEncode(_toDjangoJson(profile)),
-    );
+    ).timeout(const Duration(seconds: 15));
 
     if (response.statusCode != 200) {
       throw Exception('Failed to save profile to server');
@@ -183,7 +183,7 @@ class ApiService {
         'university_name': universityName,
         'program_name': programName,
       }),
-    );
+    ).timeout(const Duration(seconds: 15));
 
     if (response.statusCode != 200) {
       final data = jsonDecode(response.body);
@@ -202,7 +202,7 @@ class ApiService {
         HttpHeaders.contentTypeHeader: 'application/json',
         HttpHeaders.authorizationHeader: 'Token $token',
       },
-    );
+    ).timeout(const Duration(seconds: 15));
 
     if (response.statusCode != 200) {
       throw Exception('Failed to load favorites from server');

@@ -75,11 +75,61 @@ class ProgramMatcher:
                 return False
         return True
 
+    def _calculate_hybrid_score(self, program: dict, profile: dict, raw_semantic_score: float) -> float:
+        # 1. Semantic Score (0 to 100)
+        min_raw = 0.15
+        max_raw = 0.58
+        if raw_semantic_score <= min_raw:
+            s_sem = 0.0
+        elif raw_semantic_score >= max_raw:
+            s_sem = 100.0
+        else:
+            s_sem = (raw_semantic_score - min_raw) / (max_raw - min_raw) * 100.0
+
+        # 2. Tag/Keyword Overlap Score (0 to 100)
+        user_text = (profile["interests"] + " " + profile["field"]).lower()
+        user_words = set(user_text.replace(",", " ").replace(";", " ").split())
+        stop_words = {"and", "or", "in", "of", "to", "the", "a", "an", "for", "with", "is", "my", "i", "interested"}
+        user_words = user_words - stop_words
+        
+        prog_text = (program["field_tags"] + " " + program["program_name"]).lower()
+        prog_words = set(prog_text.replace(",", " ").replace(";", " ").split()) - stop_words
+        
+        overlap = user_words & prog_words
+        s_tag = min(100.0, len(overlap) * 25.0)
+
+        # 3. GPA Buffer Score (0 to 100)
+        if profile["gpa"] > 0:
+            gpa_diff = profile["gpa"] - program["min_gpa"]
+            if gpa_diff < 0:
+                s_gpa = 0.0
+            else:
+                # 50 base points for meeting requirement, up to 50 additional points for exceeding by 0.5+ GPA
+                s_gpa = 50.0 + min(50.0, gpa_diff * 100.0)
+        else:
+            s_gpa = 75.0
+
+        # 4. Budget Buffer Score (0 to 100)
+        if profile["budget"] > 0 and profile["budget"] >= program["tuition_usd_year"]:
+            if program["tuition_usd_year"] == 0:
+                s_budget = 100.0
+            else:
+                s_budget = (1.0 - program["tuition_usd_year"] / profile["budget"]) * 100.0
+        else:
+            s_budget = 75.0
+
+        # Weighting: 50% Semantic, 20% Tag, 15% GPA, 15% Budget
+        final_score = (0.50 * s_sem) + (0.20 * s_tag) + (0.15 * s_gpa) + (0.15 * s_budget)
+        
+        # Clip to standard display bounds [30.0, 98.0]
+        final_score = max(30.0, min(98.0, final_score))
+        return round(final_score, 1)
+
     # ------------------------------------------------------------------
     # Explanation generation
     # ------------------------------------------------------------------
 
-    def _explain(self, program: dict, profile: dict, score: float) -> str:
+    def _explain(self, program: dict, profile: dict, scaled_score: float) -> str:
         reasons = []
 
         if profile["gpa"] >= program["min_gpa"]:
@@ -99,9 +149,9 @@ class ProgramMatcher:
         if program["scholarship_available"]:
             reasons.append("scholarships are available")
 
-        if score > 0.7:
+        if scaled_score > 85.0:
             reasons.append("strong semantic match to your profile")
-        elif score > 0.5:
+        elif scaled_score > 65.0:
             reasons.append("good alignment with your stated goals")
 
         if not reasons:
@@ -125,12 +175,18 @@ class ProgramMatcher:
                 continue
             ranked.append((scores[i], program))
 
-        # Sort by score descending
-        ranked.sort(key=lambda x: x[0], reverse=True)
+        # Build results with hybrid score
+        hybrid_ranked = []
+        for raw_sem_score, program in ranked:
+            h_score = self._calculate_hybrid_score(program, profile, float(raw_sem_score))
+            hybrid_ranked.append((h_score, program))
+
+        # Sort by hybrid score descending
+        hybrid_ranked.sort(key=lambda x: x[0], reverse=True)
 
         # Build response
         results = []
-        for score, program in ranked[:top_n]:
+        for score, program in hybrid_ranked[:top_n]:
             results.append({
                 "university":   program["university_name"],
                 "program":      program["program_name"],
@@ -143,8 +199,10 @@ class ProgramMatcher:
                 "scholarship":  program["scholarship_available"],
                 "deadline":     program["deadline_month"],
                 "url":          program["program_url"],
-                "score":        round(float(score) * 100, 1),
+                "score":        score,
                 "explanation":  self._explain(program, profile, score),
             })
 
         return results
+
+

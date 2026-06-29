@@ -1,10 +1,12 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 import '../services/api_service.dart';
 import '../theme/app_theme.dart';
-import '../widgets/google_sandbox_dialog.dart';
 import 'register_screen.dart';
 import 'settings_screen.dart';
 
@@ -24,11 +26,68 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _isLoading = false;
   String? _errorMessage;
 
+  final GoogleSignIn _googleSignIn = GoogleSignIn(
+    clientId: Platform.isIOS
+        ? '838700862419-7bufk43itur8ps023tgfu8nopog4dmsl.apps.googleusercontent.com'
+        : '838700862419-it6v0ol8tdkpf3m3mkm3vqab8nsauhbi.apps.googleusercontent.com',
+    scopes: ['email'],
+  );
+
   @override
   void dispose() {
     _usernameController.dispose();
     _passwordController.dispose();
     super.dispose();
+  }
+
+  Future<void> _handleGoogleSignIn() async {
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+    try {
+      print("[GOOGLE SIGN IN] Calling _googleSignIn.signIn()...");
+      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+      print("[GOOGLE SIGN IN] _googleSignIn.signIn() returned: $googleUser");
+      if (googleUser == null) {
+        setState(() {
+          _isLoading = false;
+        });
+        return;
+      }
+      print("[GOOGLE SIGN IN] Getting googleUser.authentication...");
+      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+      print("[GOOGLE SIGN IN] Authentication retrieved successfully.");
+      final String? idToken = googleAuth.idToken;
+      print("[GOOGLE SIGN IN] idToken retrieved: ${idToken != null ? 'length: ${idToken.length}' : 'null'}");
+
+      if (idToken == null) {
+        throw Exception("Failed to retrieve Google ID Token.");
+      }
+
+      final prefs = await SharedPreferences.getInstance();
+      final serverUrl = prefs.getString('server_url') ?? 'https://mastermatch.onrender.com';
+      print("[GOOGLE SIGN IN] Using serverUrl: $serverUrl");
+      final api = ApiService(baseUrl: serverUrl);
+
+      print("[GOOGLE SIGN IN] Calling loginWithGoogle endpoint on backend...");
+      final token = await api.loginWithGoogle(idToken);
+      print("[GOOGLE SIGN IN] Backend login successful. token: $token");
+
+      await prefs.setString('auth_token', token);
+      await prefs.setString('username', googleUser.email.split('@')[0]);
+
+      if (mounted) {
+        Navigator.pop(context, true);
+      }
+    } catch (e, stackTrace) {
+      print("[GOOGLE SIGN IN] Error occurred: $e");
+      print("[GOOGLE SIGN IN] Stacktrace: $stackTrace");
+      setState(() {
+        _errorMessage = e.toString().replaceFirst('Exception: ', '');
+        _isLoading = false;
+      });
+    }
   }
 
   Future<void> _login() async {
@@ -321,16 +380,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                       child: Material(
                                         color: Colors.transparent,
                                         child: InkWell(
-                                          onTap: () async {
-                                            final navigator = Navigator.of(context);
-                                            final success = await showDialog<bool>(
-                                              context: context,
-                                              builder: (_) => const GoogleSandboxDialog(),
-                                            );
-                                            if (success == true && mounted) {
-                                              navigator.pop(true);
-                                            }
-                                          },
+                                          onTap: _isLoading ? null : _handleGoogleSignIn,
                                           borderRadius: BorderRadius.circular(AppBorderRadius.pill),
                                           child: Padding(
                                             padding: const EdgeInsets.symmetric(vertical: 14),
