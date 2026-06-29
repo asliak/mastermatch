@@ -49,12 +49,28 @@ class ProgramMatcher:
         return self.model.encode(texts, convert_to_numpy=True)
 
     def _embed_profile(self, profile: dict) -> np.ndarray:
-        """Turn the student profile into a single embedding."""
-        text = (
-            f"I am interested in {profile['interests']}. "
-            f"My field of study is {profile['field']}. "
-            f"My career goals are: {profile['career_goals']}."
-        )
+        """Turn the student profile into a single embedding, omitting empty fields."""
+        parts = []
+        
+        # Only add fields if they are filled in
+        field = profile.get("field", "").strip()
+        if field:
+            parts.append(f"Study program field: {field}.")
+            
+        interests = profile.get("interests", "").strip()
+        if interests:
+            parts.append(f"Academic interests: {interests}.")
+            
+        goals = profile.get("career_goals", "").strip()
+        if goals:
+            parts.append(f"Career goals: {goals}.")
+            
+        # Fallback if everything is left blank
+        if not parts:
+            text = "Graduate master's degree programs."
+        else:
+            text = " ".join(parts)
+            
         return self.model.encode([text], convert_to_numpy=True)
 
     # ------------------------------------------------------------------
